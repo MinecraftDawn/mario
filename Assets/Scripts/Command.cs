@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro.EditorUtilities;
@@ -23,6 +24,11 @@ public class MoveCommand : PlayerCommand
     public override void Execute(GameObject actor)
     {
         // TODO: the player's move command
+        Rigidbody2D rigidbody = actor.GetComponent<Rigidbody2D>();
+        Player player = actor.GetComponent<Player>();
+        Vector2 position = rigidbody.position;
+        position.x = position.x +  _horizontal * Time.deltaTime;
+        rigidbody.position = position;
     }
 }
 
