@@ -5,12 +5,19 @@ using UnityEngine;
 
 public class Monster : MonoBehaviour
 {
+    class SlopeData
+    {
+        public bool onSlope;
+        public Vector2 slopeVector;
+    }
     public float moveSpeed;
     public float slopeDetectDistance;
     public LayerMask groundMask;
     public bool moveRight;
 
     private Rigidbody2D _rigidbody2d;
+    private bool _onGround;
+    private SlopeData _slope;
 
     // Start is called before the first frame update
     void Start()
@@ -18,45 +25,43 @@ public class Monster : MonoBehaviour
         _rigidbody2d = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     void FixedUpdate()
     {
+        _onGround = DetectGround();
+        _slope = DetectSlope();
         _rigidbody2d.velocity = decideMovement();
     }
 
-    RaycastHit2D DetectSlope()
+    private SlopeData DetectSlope()
     {
+        SlopeData slope = new SlopeData();
         RaycastHit2D hit = Physics2D.Raycast(
             _rigidbody2d.position, -Vector2.up, slopeDetectDistance, groundMask);
-        return hit;
+        slope.onSlope = Mathf.Abs(hit.normal.x) > 1e-4f;
+        slope.slopeVector = Vector2.Perpendicular(hit.normal).normalized;
+        return slope;
     }
 
-    bool isOnGround()
+    private bool DetectGround()
     {
-        bool result = Physics2D.OverlapCircle(_rigidbody2d.position, 0.2f, groundMask);
+        bool result = Physics2D.OverlapCircle(_rigidbody2d.position, 0.38f, groundMask);
         return result;
     }
 
-    Vector2 decideMovement()
+    private Vector2 decideMovement()
     {
         if (moveSpeed == 0) { return _rigidbody2d.velocity; }
         Vector2 new_velocity = _rigidbody2d.velocity;
         new_velocity.x = moveSpeed * (moveRight ? 1f : -1f);
-        RaycastHit2D result_ray_hit = DetectSlope();
-        if (isOnGround() && result_ray_hit) {
-            Vector2 slope_normal_perpendicular = Vector2.Perpendicular(result_ray_hit.normal).normalized;
-            // Debug.DrawRay(result_ray_hit.point, result_ray_hit.normal, Color.green);
-            // Debug.DrawRay(result_ray_hit.point, slope_normal_perpendicular, Color.red);
-            // on a slope
-            if (Mathf.Abs(result_ray_hit.normal.x) > 1e-4f) {
-                new_velocity = slope_normal_perpendicular * moveSpeed * (moveRight ? -1f : 1f);
+        if (IsOnGround()) {
+            if (IsOnSlope()) {
+                new_velocity = _slope.slopeVector * moveSpeed * (moveRight ? -1f : 1f);
             }
         }
         return new_velocity;
     }
+
+    public bool IsOnGround() { return _onGround; }
+    public bool IsOnSlope() { return _slope.onSlope; }
+    public Vector2 GetSlopeVector() { return _slope.slopeVector; }
 }
