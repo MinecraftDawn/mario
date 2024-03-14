@@ -36,7 +36,8 @@ public class JumpCommand : PlayerCommand
 {
     public override void Execute(GameObject actor)
     {
-        // TODO: the player's jump command
+        Rigidbody2D rigidbody = actor.GetComponent<Rigidbody2D>();
+        rigidbody.AddForce(Vector2.up * 10, ForceMode2D.Impulse); 
     }
 }
 }

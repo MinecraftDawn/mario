@@ -35,33 +35,42 @@ public class MovableState : BaseState
 
 public class OnLandState : MovableState
 {
-    // public override BaseState Update(GameObject actor)
-    // {
-    //     // TODO: need to fill in
-    //     return this;
-    // }
-
     public override BaseState FixedUpdate(GameObject actor)
     {
         // TODO: need to fill in
         base.FixedUpdate(actor);
+        
+        Player player = actor.GetComponent<Player>();
+        for (int i = 0; i < player.GetCommandListSize(); i++) {
+            BaseCommand command = player.GetCommand(i);
+            if (command is JumpCommand) {
+                return new InAirState();
+            }
+        }
 
         return this;
     }
 }
 
 public class InAirState : MovableState
-{
-    // public override BaseState Update(GameObject actor)
-    // {
-    //     // TODO: need to fill in
-    //     return this;
-    // }
-
+{ 
     public override BaseState FixedUpdate(GameObject actor)
     {
-        // TODO: need to fill in
-        return this;
+        base.FixedUpdate(actor);
+        Rigidbody2D rigidbody = actor.GetComponent<Rigidbody2D>();
+
+        if (!isOnGround(rigidbody)) { return this; }
+        
+        return new OnLandState();
+    }
+    
+    private bool isFalling(Rigidbody2D rigidbody) { return rigidbody.velocity.y < 0.0f; }
+    
+    
+    private bool isOnGround(Rigidbody2D rigidbody) {
+        LayerMask mask = LayerMask.GetMask("Ground");
+        RaycastHit2D hit = Physics2D.Raycast(rigidbody.position, -Vector2.up, 0.05f, mask);
+        return hit.collider != null;
     }
 }
 
