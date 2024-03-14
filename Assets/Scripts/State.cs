@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Command;
 using UnityEngine;
 
@@ -23,12 +24,8 @@ public class MovableState : BaseState
         Player player = actor.GetComponent<Player>();
         Vector2 ori_position = actor.GetComponent<Rigidbody2D>().position;
         
-        for (int i = 0; i < player.GetCommandListSize(); i++) {
-            BaseCommand command = player.GetCommand(i);
-            if (command is MoveCommand) { player.ExecuteCommand(i); }
-        }
+        player.ExecuteCommand(x => x is MoveCommand);
         
-
         return this;
     }
 }
@@ -41,12 +38,9 @@ public class OnLandState : MovableState
         base.FixedUpdate(actor);
         
         Player player = actor.GetComponent<Player>();
-        for (int i = 0; i < player.GetCommandListSize(); i++) {
-            BaseCommand command = player.GetCommand(i);
-            if (command is JumpCommand) {
-                return new InAirState();
-            }
-        }
+        bool existJump = player.ExecuteCommand(x => x is JumpCommand);
+        if (existJump) {  return new InAirState();}
+        
 
         return this;
     }
@@ -58,7 +52,6 @@ public class InAirState : MovableState
     {
         base.FixedUpdate(actor);
         Rigidbody2D rigidbody = actor.GetComponent<Rigidbody2D>();
-
         if (!isOnGround(rigidbody)) { return this; }
         
         return new OnLandState();
@@ -69,7 +62,7 @@ public class InAirState : MovableState
     
     private bool isOnGround(Rigidbody2D rigidbody) {
         LayerMask mask = LayerMask.GetMask("Ground");
-        RaycastHit2D hit = Physics2D.Raycast(rigidbody.position, -Vector2.up, 0.05f, mask);
+        RaycastHit2D hit = Physics2D.Raycast(rigidbody.position, -Vector2.up, 1f, mask);
         return hit.collider != null;
     }
 }
