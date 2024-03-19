@@ -36,6 +36,7 @@ public class JumpCommand : PlayerCommand
 {
     public override void Execute(GameObject gameObject)
     {
+        Debug.Log("jump is executed.");
         Rigidbody2D rigidbody = gameObject.GetComponent<Rigidbody2D>();
         Player player = gameObject.GetComponent<Player>();
         rigidbody.AddForce(Vector2.up * player.jump_force, ForceMode2D.Impulse); 
