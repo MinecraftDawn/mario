@@ -39,7 +39,7 @@ public class JumpCommand : PlayerCommand
         Debug.Log("jump is executed.");
         Rigidbody2D rigidbody = gameObject.GetComponent<Rigidbody2D>();
         Player player = gameObject.GetComponent<Player>();
-        rigidbody.AddForce(Vector2.up * player.jump_force, ForceMode2D.Impulse); 
+        rigidbody.AddForce(Vector2.up * player.jumpForce, ForceMode2D.Impulse); 
     }
 }
 }
