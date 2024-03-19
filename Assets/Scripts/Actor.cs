@@ -14,22 +14,24 @@ public abstract class ActorBase : MonoBehaviour {
     public float jumpForce = 3f;
 
     // Start is called before the first frame update
-    public void Start()
+    public virtual void Start()
     {
         _state = new OnLandState();
         _commandList = new List<BaseCommand>();
     }
 
     // Update is called once per frame
-    public void Update()
+    public virtual void Update()
     {
         _state = _state.Update(gameObject);
     }
 
-    public void FixedUpdate()
+    public virtual void FixedUpdate()
     {
         _state = _state.FixedUpdate(gameObject);
     }
+
+    public virtual bool DetectGround() { return true; }
 
     public virtual BaseCommand GetCommand(int idx) { return _commandList[idx]; }
     public virtual bool IsContainCommand<Command>() {return _commandList.Any(x => x is Command);}

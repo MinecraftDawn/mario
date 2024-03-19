@@ -27,7 +27,7 @@ public class MoveCommand : PlayerCommand
         Rigidbody2D rigidbody = gameObject.GetComponent<Rigidbody2D>();
         Player player = gameObject.GetComponent<Player>();
         Vector2 position = rigidbody.position;
-        position.x = position.x +  _horizontal * Time.deltaTime;
+        position.x = position.x + player.horizontalSpeed * _horizontal * Time.deltaTime;
         rigidbody.position = position;
     }
 }

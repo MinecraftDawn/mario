@@ -54,21 +54,14 @@ public class InAirState : MovableState
     public override BaseState FixedUpdate(GameObject actor)
     {
         base.FixedUpdate(actor);
-        Rigidbody2D rigidbody = actor.GetComponent<Rigidbody2D>();
-        if (!isOnGround(rigidbody)) { return this; }
+        Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
+        if (!agent.DetectGround()) { return this; }
         
         Debug.Log("Switch to on land state");
         return new OnLandState();
     }
     
     private bool isFalling(Rigidbody2D rigidbody) { return rigidbody.velocity.y < 0.0f; }
-    
-    
-    private bool isOnGround(Rigidbody2D rigidbody) {
-        LayerMask mask = LayerMask.GetMask("Ground");
-        bool result = Physics2D.OverlapCircle(rigidbody.position + new Vector2(0, 0.3f), 0.31f, mask);
-        return result && Mathf.Abs(rigidbody.velocity.y) < 1e-4f;
-    }
 }
 
 }
