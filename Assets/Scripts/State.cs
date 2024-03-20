@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Command;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace State {
@@ -38,17 +39,11 @@ public class OnLandState : MovableState
         base.FixedUpdate(actor);
         
         Player player = actor.GetComponent<Player>();
-        
-        // for (int i = 0; i < player.GetCommandListSize(); i++) {
-        //     BaseCommand command = player.GetCommand(i);
-        //     if (command is JumpCommand) {
-        //         player.ExecuteCommand(i);
-        //         return new InAirState();
-        //     }
-        // }
         bool existJump = player.ExecuteCommand(x => x is JumpCommand);
-        if (existJump) {  return new InAirState();}
-        
+        if (existJump) { 
+            Debug.Log("Switch to in air state.");
+            return new InAirState();
+        }
 
         return this;
     }
@@ -59,20 +54,14 @@ public class InAirState : MovableState
     public override BaseState FixedUpdate(GameObject actor)
     {
         base.FixedUpdate(actor);
-        Rigidbody2D rigidbody = actor.GetComponent<Rigidbody2D>();
-        if (!isOnGround(rigidbody)) { return this; }
+        Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
+        if (!agent.DetectGround()) { return this; }
         
+        Debug.Log("Switch to on land state");
         return new OnLandState();
     }
     
     private bool isFalling(Rigidbody2D rigidbody) { return rigidbody.velocity.y < 0.0f; }
-    
-    
-    private bool isOnGround(Rigidbody2D rigidbody) {
-        LayerMask mask = LayerMask.GetMask("Ground");
-        RaycastHit2D hit = Physics2D.Raycast(rigidbody.position, -Vector2.up, 0.05f, mask);
-        return hit.collider != null;
-    }
 }
 
 }
