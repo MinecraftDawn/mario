@@ -41,7 +41,7 @@ public class OnLandState : MovableState
         Player player = actor.GetComponent<Player>();
         bool existJump = player.ExecuteCommand(x => x is JumpCommand);
         if (existJump) { 
-            Debug.Log("Switch to in air state.");
+            // Debug.Log("Switch to in air state.");
             return new InAirState();
         }
 
@@ -57,7 +57,7 @@ public class InAirState : MovableState
         Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
         if (!agent.DetectGround()) { return this; }
         
-        Debug.Log("Switch to on land state");
+        // Debug.Log("Switch to on land state");
         return new OnLandState();
     }
     

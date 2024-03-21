@@ -11,7 +11,6 @@ public class Player : ActorBase
 {
 
     private CapsuleCollider2D _capsuleCollider;
-    private Rigidbody2D _rigidbody;
     private Vector2 _capsuleSize;
 
     // Start is called before the first frame update
@@ -19,7 +18,6 @@ public class Player : ActorBase
     {
         base.Start();
         _capsuleCollider = GetComponent<CapsuleCollider2D>();
-        _rigidbody = GetComponent<Rigidbody2D>();
         _capsuleSize = _capsuleCollider.size;
     }
 

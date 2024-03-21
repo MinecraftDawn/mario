@@ -10,6 +10,7 @@ namespace Actor {
 public abstract class ActorBase : MonoBehaviour {
     protected BaseState _state;
     protected List<BaseCommand> _commandList;
+    protected Rigidbody2D _rigidbody;
     public float horizontalSpeed = 3f;
     public float jumpForce = 3f;
 
@@ -18,6 +19,7 @@ public abstract class ActorBase : MonoBehaviour {
     {
         _state = new OnLandState();
         _commandList = new List<BaseCommand>();
+        _rigidbody = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -32,6 +34,8 @@ public abstract class ActorBase : MonoBehaviour {
     }
 
     public virtual bool DetectGround() { return true; }
+    public virtual void SetVelocity(Vector2 velocity) { _rigidbody.velocity = velocity; }
+    public virtual Vector2 GetVelocity() { return _rigidbody.velocity; }
 
     public virtual BaseCommand GetCommand(int idx) { return _commandList[idx]; }
     public virtual bool IsContainCommand<Command>() {return _commandList.Any(x => x is Command);}
@@ -41,7 +45,8 @@ public abstract class ActorBase : MonoBehaviour {
     public virtual void ReceiveCommands(BaseCommand command) { _commandList.Add(command); }
     public virtual void ExecuteCommand(int idx) { _commandList[idx].Execute(gameObject); }
 
-    public virtual bool ExecuteCommand(Func<BaseCommand, bool> condition) {
+    public virtual bool ExecuteCommand(Func<BaseCommand, bool> condition)
+    {
         var commands = _commandList.Where(condition);
         foreach (var command in commands) {
             command.Execute(gameObject);
