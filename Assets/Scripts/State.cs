@@ -35,10 +35,14 @@ public class OnLandState : MovableState
 {
     public override BaseState FixedUpdate(GameObject actor)
     {
-        // TODO: need to fill in
+        Player player = actor.GetComponent<Player>();
+        if (player.IsContainCommand<MoveCommand>()) {
+            player.SetFriction("none");
+        } else {
+            player.SetFriction("full");
+        }
         base.FixedUpdate(actor);
         
-        Player player = actor.GetComponent<Player>();
         bool existJump = player.ExecuteCommand(x => x is JumpCommand);
         if (existJump) { 
             // Debug.Log("Switch to in air state.");

@@ -33,6 +33,7 @@ public abstract class ActorBase : MonoBehaviour {
         _state = _state.FixedUpdate(gameObject);
     }
 
+    public virtual void SetFriction(string friction_type) {}
     public virtual bool DetectGround() { return true; }
     public virtual void SetVelocity(Vector2 velocity) { _rigidbody.velocity = velocity; }
     public virtual Vector2 GetVelocity() { return _rigidbody.velocity; }

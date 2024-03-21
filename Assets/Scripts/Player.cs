@@ -12,6 +12,8 @@ public class Player : ActorBase
 
     private CapsuleCollider2D _capsuleCollider;
     private Vector2 _capsuleSize;
+    public PhysicsMaterial2D fullFriction;
+    public PhysicsMaterial2D noFriction;
 
     // Start is called before the first frame update
     public override void Start()
@@ -33,6 +35,14 @@ public class Player : ActorBase
         base.FixedUpdate();
     }
 
+    public override void SetFriction(string friction_type)
+    {
+        if (friction_type == "full") {
+            _capsuleCollider.sharedMaterial = fullFriction;
+        } else if (friction_type == "none") {
+            _capsuleCollider.sharedMaterial = noFriction;
+        }
+    }
     public override bool DetectGround()
     {
         LayerMask ground_mask = LayerMask.GetMask("Ground");
