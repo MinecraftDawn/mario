@@ -13,20 +13,12 @@ public interface BaseState
     public BaseState FixedUpdate(GameObject actor);
 }
 
-// TODO: Maybe you will need a Movable state to prevent some redundant code.
-
 public class MovableState : BaseState
 {
-    public virtual BaseState Update(GameObject actor) {
-        return this;
-    }
-
+    public virtual BaseState Update(GameObject actor) { return this; }
     public virtual BaseState FixedUpdate(GameObject actor) {
         Player player = actor.GetComponent<Player>();
-        Vector2 ori_position = actor.GetComponent<Rigidbody2D>().position;
-        
         player.ExecuteCommand(x => x is MoveCommand);
-        
         return this;
     }
 }
@@ -35,6 +27,7 @@ public class OnLandState : MovableState
 {
     public override BaseState FixedUpdate(GameObject actor)
     {
+        // TODO: change to use parent class Actor.ActorBase
         Player player = actor.GetComponent<Player>();
         if (player.IsContainCommand<MoveCommand>()) {
             player.SetFriction("none");
@@ -44,10 +37,7 @@ public class OnLandState : MovableState
         base.FixedUpdate(actor);
         
         bool existJump = player.ExecuteCommand(x => x is JumpCommand);
-        if (existJump) { 
-            // Debug.Log("Switch to in air state.");
-            return new InAirState();
-        }
+        if (existJump) { return new InAirState(); }
 
         return this;
     }
@@ -61,7 +51,7 @@ public class InAirState : MovableState
         Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
         if (!agent.DetectGround()) { return this; }
         
-        // Debug.Log("Switch to on land state");
+        agent.SetFriction("full");
         return new OnLandState();
     }
     
