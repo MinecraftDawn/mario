@@ -11,15 +11,25 @@ public class Player : ActorBase
 {
 
     private CapsuleCollider2D _capsuleCollider;
-    private Rigidbody2D _rigidbody;
     private Vector2 _capsuleSize;
+    public PhysicsMaterial2D fullFriction;
+    public PhysicsMaterial2D noFriction;
+    public Vector2 groundCastBoxSize;
+    public Vector2 groundCastCenterOffset;
+    public float groundCastDist;  // ground detect cast distance
+
+    private void OnDrawGizmos()
+    {
+        Vector2 center = transform.position;
+        center += groundCastCenterOffset;
+        Gizmos.DrawWireCube(center - Vector2.up * groundCastDist, groundCastBoxSize);
+    }
 
     // Start is called before the first frame update
     public override void Start()
     {
         base.Start();
         _capsuleCollider = GetComponent<CapsuleCollider2D>();
-        _rigidbody = GetComponent<Rigidbody2D>();
         _capsuleSize = _capsuleCollider.size;
     }
 
@@ -35,11 +45,23 @@ public class Player : ActorBase
         base.FixedUpdate();
     }
 
+    public override void SetFriction(string friction_type)
+    {
+        if (friction_type == "full") {
+            _capsuleCollider.sharedMaterial = fullFriction;
+        } else if (friction_type == "none") {
+            _capsuleCollider.sharedMaterial = noFriction;
+        }
+    }
+
     public override bool DetectGround()
     {
         LayerMask ground_mask = LayerMask.GetMask("Ground");
-        Vector2 check_position = _rigidbody.position;
-        Collider2D hit = Physics2D.OverlapCircle(check_position, _capsuleSize.x, ground_mask);
-        return hit != null && Mathf.Abs(_rigidbody.velocity.y) < 1e-4f;
+        Vector2 center = transform.position;
+        center += groundCastCenterOffset;
+        RaycastHit2D hit = Physics2D.BoxCast(center, 
+            groundCastBoxSize, 0, -Vector2.up, groundCastDist, ground_mask);
+        if (hit) { Debug.Log("detected ground"); }
+        return hit;
     }
 }
