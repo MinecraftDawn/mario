@@ -11,6 +11,7 @@ public interface BaseState
 {
     public BaseState Update(GameObject actor);
     public BaseState FixedUpdate(GameObject actor);
+    public void OnStateStart(GameObject actor);
 }
 
 public class MovableState : BaseState
@@ -21,6 +22,8 @@ public class MovableState : BaseState
         player.ExecuteCommand(x => x is MoveCommand);
         return this;
     }
+
+    public virtual void OnStateStart(GameObject actor) { }
 }
 
 public class OnLandState : MovableState
@@ -41,6 +44,11 @@ public class OnLandState : MovableState
 
         return this;
     }
+
+    public override void OnStateStart(GameObject actor) {
+        Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
+        agent.SetFriction("full");
+    }
 }
 
 public class InAirState : MovableState
@@ -51,7 +59,6 @@ public class InAirState : MovableState
         Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
         if (!agent.DetectGround()) { return this; }
         
-        agent.SetFriction("full");
         return new OnLandState();
     }
     
