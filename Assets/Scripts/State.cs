@@ -40,14 +40,13 @@ public class OnLandState : MovableState
         base.FixedUpdate(actor);
         
         bool existJump = player.ExecuteCommand(x => x is JumpCommand);
-        if (existJump) { return new InAirState(); }
+        if (existJump || !player.isOnGround()) { return new InAirState(); }
 
         return this;
     }
 
     public override void OnStateStart(GameObject actor) {
         Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
-        agent.SetFriction("full");
     }
 }
 
@@ -61,7 +60,13 @@ public class InAirState : MovableState
         
         return new OnLandState();
     }
-    
+
+    public override void OnStateStart(GameObject actor)
+    {
+        Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
+        agent.SetFriction("none");
+    }
+
     private bool isFalling(Rigidbody2D rigidbody) { return rigidbody.velocity.y < 0.0f; }
 }
 
