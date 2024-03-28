@@ -57,7 +57,7 @@ public class InAirState : MovableState
     {
         base.FixedUpdate(actor);
         Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
-        if (!agent.DetectGround()) { return this; }
+        if (!agent.isOnGround()) { return this; }
         
         return new OnLandState();
     }

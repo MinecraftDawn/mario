@@ -54,14 +54,20 @@ public class Player : ActorBase
         }
     }
 
-    public override bool DetectGround()
+    protected override RaycastHit2D? DetectGround()
     {
         LayerMask ground_mask = LayerMask.GetMask("Ground");
         Vector2 center = transform.position;
         center += groundCastCenterOffset;
         RaycastHit2D hit = Physics2D.BoxCast(center, 
             groundCastBoxSize, 0, -Vector2.up, groundCastDist, ground_mask);
-        if (hit) { Debug.Log("detected ground"); }
-        return hit;
+        return hit ? hit : null;
+    }
+
+    protected override RaycastHit2D? DetectSlope()
+    {
+        LayerMask ground_mask = LayerMask.GetMask("Ground");
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.up, 0.5f, ground_mask);
+        return hit ? hit : null;
     }
 }
