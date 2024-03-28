@@ -30,7 +30,10 @@ public abstract class ActorBase : MonoBehaviour {
 
     public virtual void FixedUpdate()
     {
+        BaseState oldState = _state;
         _state = _state.FixedUpdate(gameObject);
+        if (!ReferenceEquals(oldState, _state)) { _state.OnStateStart(gameObject); }
+        
     }
 
     public virtual void SetFriction(string friction_type) {}
