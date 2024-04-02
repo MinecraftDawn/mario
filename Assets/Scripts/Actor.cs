@@ -39,6 +39,7 @@ public abstract class ActorBase : MonoBehaviour {
         if (!ReferenceEquals(oldState, _state)) { _state.OnStateStart(gameObject); }
     }
 
+    // TODO: maybe define the function in the child class rather than here.
     protected virtual void CollectState()
     {
         _onGround = DetectGround() != null;
@@ -60,6 +61,8 @@ public abstract class ActorBase : MonoBehaviour {
     public Vector2 GetVelocity() { return _rigidbody.velocity; }
     public bool isOnGround() { return _onGround; }
     public bool isOnSlope() { return _onSlope; }
+    public Type GetStateType() { return _state.GetType(); }
+    public Vector2 GetGroundDirection() { return _groundDirection; }
 
     public virtual BaseCommand GetCommand(int idx) { return _commandList[idx]; }
     public virtual bool IsContainCommand<Command>() {return _commandList.Any(x => x is Command);}

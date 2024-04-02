@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using State;
 using TMPro.EditorUtilities;
 using UnityEngine;
 
@@ -26,7 +27,11 @@ public class MoveCommand : PlayerCommand
         // TODO: the player's move command
         Player player = gameObject.GetComponent<Player>();
         Vector2 velocity = player.GetVelocity();
-        velocity.x = player.horizontalSpeed * _horizontal;
+        if (player.GetStateType() == typeof(OnLandState) && player.isOnSlope()) {
+            velocity = player.GetGroundDirection() * player.horizontalSpeed * _horizontal;
+        } else {
+            velocity.x = player.horizontalSpeed * _horizontal;
+        }
         player.SetVelocity(velocity);
     }
 }

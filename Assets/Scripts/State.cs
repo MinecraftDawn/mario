@@ -47,6 +47,7 @@ public class OnLandState : MovableState
 
     public override void OnStateStart(GameObject actor) {
         Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
+        agent.SetFriction("full");
     }
 }
 
