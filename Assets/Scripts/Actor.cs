@@ -11,6 +11,9 @@ public abstract class ActorBase : MonoBehaviour {
     protected BaseState _state;
     protected List<BaseCommand> _commandList;
     protected Rigidbody2D _rigidbody;
+    protected bool _onGround;
+    protected bool _onSlope;
+    protected Vector2 _groundDirection;
     public float horizontalSpeed = 3f;
     public float jumpForce = 3f;
 
@@ -30,16 +33,40 @@ public abstract class ActorBase : MonoBehaviour {
 
     public virtual void FixedUpdate()
     {
+        CollectState();
         BaseState oldState = _state;
         _state = _state.FixedUpdate(gameObject);
         if (!ReferenceEquals(oldState, _state)) { _state.OnStateStart(gameObject); }
-        
     }
 
+    // TODO: maybe define the function in the child class rather than here.
+    protected virtual void CollectState()
+    {
+        _onGround = DetectGround() != null;
+        _onSlope = false;
+        RaycastHit2D? result = DetectSlope();
+        if (result != null) {
+            RaycastHit2D slope_hit = result.Value;
+            _groundDirection = -Vector2.Perpendicular(slope_hit.normal).normalized;
+            Debug.DrawRay(slope_hit.point, slope_hit.normal, Color.green);
+            Debug.DrawRay(slope_hit.point, _groundDirection, Color.red);
+            if (Mathf.Abs(slope_hit.normal.x) > 1e-4f) { _onSlope = true; }
+        }
+    }
+
+    protected virtual RaycastHit2D? DetectGround() { return null; }
+    protected virtual RaycastHit2D? DetectSlope() { return null; }
     public virtual void SetFriction(string friction_type) {}
-    public virtual bool DetectGround() { return true; }
-    public virtual void SetVelocity(Vector2 velocity) { _rigidbody.velocity = velocity; }
-    public virtual Vector2 GetVelocity() { return _rigidbody.velocity; }
+    public Vector2 velocity {
+        get { return _rigidbody.velocity; }
+        set { _rigidbody.velocity = value; }
+    }
+    public bool IsOnGround() { return _onGround; }
+    public bool IsOnSlope() { return _onSlope; }
+    public Type GetStateType() { return _state.GetType(); }
+
+    public bool IsStateType<State>() { return _state is State; }
+    public Vector2 GetGroundDirection() { return _groundDirection; }
 
     public virtual BaseCommand GetCommand(int idx) { return _commandList[idx]; }
     public virtual bool IsContainCommand<Command>() {return _commandList.Any(x => x is Command);}
