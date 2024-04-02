@@ -26,13 +26,13 @@ public class MoveCommand : PlayerCommand
     {
         // TODO: the player's move command
         Player player = gameObject.GetComponent<Player>();
-        Vector2 velocity = player.GetVelocity();
-        if (player.GetStateType() == typeof(OnLandState) && player.isOnSlope()) {
+        Vector2 velocity = player.velocity;
+        if (player.IsStateType<OnLandState>() && player.IsOnSlope()) {
             velocity = player.GetGroundDirection() * player.horizontalSpeed * _horizontal;
         } else {
             velocity.x = player.horizontalSpeed * _horizontal;
         }
-        player.SetVelocity(velocity);
+        player.velocity = velocity;
     }
 }
 

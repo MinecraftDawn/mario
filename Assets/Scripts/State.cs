@@ -40,7 +40,7 @@ public class OnLandState : MovableState
         base.FixedUpdate(actor);
         
         bool existJump = player.ExecuteCommand(x => x is JumpCommand);
-        if (existJump || !player.isOnGround()) { return new InAirState(); }
+        if (existJump || !player.IsOnGround()) { return new InAirState(); }
 
         return this;
     }
@@ -57,7 +57,7 @@ public class InAirState : MovableState
     {
         base.FixedUpdate(actor);
         Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
-        if (!agent.isOnGround()) { return this; }
+        if (!agent.IsOnGround()) { return this; }
         
         return new OnLandState();
     }

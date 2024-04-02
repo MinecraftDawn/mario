@@ -57,11 +57,15 @@ public abstract class ActorBase : MonoBehaviour {
     protected virtual RaycastHit2D? DetectGround() { return null; }
     protected virtual RaycastHit2D? DetectSlope() { return null; }
     public virtual void SetFriction(string friction_type) {}
-    public void SetVelocity(Vector2 velocity) { _rigidbody.velocity = velocity; }
-    public Vector2 GetVelocity() { return _rigidbody.velocity; }
-    public bool isOnGround() { return _onGround; }
-    public bool isOnSlope() { return _onSlope; }
+    public Vector2 velocity {
+        get { return _rigidbody.velocity; }
+        set { _rigidbody.velocity = value; }
+    }
+    public bool IsOnGround() { return _onGround; }
+    public bool IsOnSlope() { return _onSlope; }
     public Type GetStateType() { return _state.GetType(); }
+
+    public bool IsStateType<State>() { return _state is State; }
     public Vector2 GetGroundDirection() { return _groundDirection; }
 
     public virtual BaseCommand GetCommand(int idx) { return _commandList[idx]; }
