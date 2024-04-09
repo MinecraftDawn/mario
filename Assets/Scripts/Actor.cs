@@ -16,6 +16,7 @@ public abstract class ActorBase : MonoBehaviour {
     protected Vector2 _groundDirection;
     public float horizontalSpeed = 3f;
     public float jumpForce = 3f;
+    public float maxFallSpeed = 10f;
 
     // Start is called before the first frame update
     public virtual void Start()
