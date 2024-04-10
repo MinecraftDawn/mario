@@ -37,6 +37,7 @@ public class Monster : ActorBase
         BaseState oldState = _state;
         _state = _state.FixedUpdate(gameObject);
         if (!ReferenceEquals(oldState, _state)) { _state.OnStateStart(gameObject); }
+        _commandList.Clear();
     }
 
     protected Strategy.MonsterAI CreateStrategy()
