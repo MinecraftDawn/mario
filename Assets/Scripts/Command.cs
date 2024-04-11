@@ -62,7 +62,11 @@ public class MonsterMoveCommand : MonsterCommand
         Debug.Log("Monster is trying to move forward");
         Monster monster = gameObject.GetComponent<Monster>();
         Vector2 velocity = monster.velocity;
-        velocity.x = monster.horizontalSpeed;
+        if (monster.IsOnGround() && monster.IsOnSlope()) {
+            velocity = monster.GetGroundDirection() * monster.horizontalSpeed;
+        } else {
+            velocity.x = monster.horizontalSpeed;
+        }
         monster.velocity = velocity;
     }
 }

@@ -40,6 +40,20 @@ public class Monster : ActorBase
         _commandList.Clear();
     }
 
+    protected override RaycastHit2D? DetectGround()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(_rigidbody.position, -Vector2.up, 0.5f);
+        return hit ? hit : null;
+    }
+
+    protected override RaycastHit2D? DetectSlope()
+    {
+        LayerMask ground_mask = LayerMask.GetMask("Ground");
+        // TODO: now is hard coded, try to extract the parameter to unity property
+        RaycastHit2D hit = Physics2D.Raycast(transform.position + new Vector3(0, 0.5f, 0), -Vector2.up, 1.0f, ground_mask);
+        return hit ? hit : null; // check hit.collider is empty or not
+    }
+
     protected Strategy.MonsterAI CreateStrategy()
     {
         if (strategyChoice == StrategyChoice.KeepMove) {
