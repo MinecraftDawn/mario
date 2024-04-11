@@ -57,6 +57,11 @@ public class InAirState : MovableState
     {
         base.FixedUpdate(actor);
         Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
+        
+        Vector2 velocity = agent.velocity;
+        velocity.y = Mathf.Max(velocity.y, -agent.maxFallSpeed);
+        agent.velocity = velocity;
+        
         if (!agent.IsOnGround()) { return this; }
         
         return new OnLandState();
