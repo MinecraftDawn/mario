@@ -33,13 +33,17 @@ public abstract class ActorBase : MonoBehaviour {
 
     public virtual void FixedUpdate()
     {
-        CollectState();
+        PreparationBeforeFixedUpdate();
+        StateFixedUpdate();
+    }
+
+    private void StateFixedUpdate()
+    {
         BaseState oldState = _state;
         _state = _state.FixedUpdate(gameObject);
         if (!ReferenceEquals(oldState, _state)) { _state.OnStateStart(gameObject); }
     }
 
-    // TODO: maybe define the function in the child class rather than here.
     protected virtual void CollectState()
     {
         _onGround = DetectGround() != null;
@@ -57,6 +61,7 @@ public abstract class ActorBase : MonoBehaviour {
     protected virtual RaycastHit2D? DetectGround() { return null; }
     protected virtual RaycastHit2D? DetectSlope() { return null; }
     protected virtual BaseState InitialState() { return null; }
+    protected virtual void PreparationBeforeFixedUpdate() { CollectState(); }
     public virtual void SetFriction(string friction_type) {}
     public Vector2 velocity {
         get { return _rigidbody.velocity; }

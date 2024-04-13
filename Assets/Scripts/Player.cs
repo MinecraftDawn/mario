@@ -36,7 +36,6 @@ public class Player : ActorBase
     // Update is called once per frame
     public override void Update()
     {
-        
         base.Update();
     }
 
