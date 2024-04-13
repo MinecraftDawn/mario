@@ -20,7 +20,7 @@ public abstract class ActorBase : MonoBehaviour {
     // Start is called before the first frame update
     public virtual void Start()
     {
-        _state = new OnLandState();
+        _state = InitialState();
         _commandList = new List<BaseCommand>();
         _rigidbody = GetComponent<Rigidbody2D>();
     }
@@ -56,6 +56,7 @@ public abstract class ActorBase : MonoBehaviour {
 
     protected virtual RaycastHit2D? DetectGround() { return null; }
     protected virtual RaycastHit2D? DetectSlope() { return null; }
+    protected virtual BaseState InitialState() { return null; }
     public virtual void SetFriction(string friction_type) {}
     public Vector2 velocity {
         get { return _rigidbody.velocity; }
