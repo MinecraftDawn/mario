@@ -48,4 +48,27 @@ public class JumpCommand : PlayerCommand
         rigidbody.AddForce(Vector2.up * player.jumpForce, ForceMode2D.Impulse); 
     }
 }
+
+public class MonsterCommand : BaseCommand
+{
+    public virtual void Execute(GameObject gameObject) {}
+}
+
+public class MonsterMoveCommand : MonsterCommand
+{
+    // Need refactor: the argument of Execute should be Actor
+    public override void Execute(GameObject gameObject)
+    {
+        Debug.Log("Monster is trying to move forward");
+        Monster monster = gameObject.GetComponent<Monster>();
+        Vector2 velocity = monster.velocity;
+        if (monster.IsOnGround() && monster.IsOnSlope()) {
+            velocity = monster.GetGroundDirection() * monster.horizontalSpeed;
+        } else {
+            velocity.x = monster.horizontalSpeed;
+        }
+        monster.velocity = velocity;
+    }
+}
+
 }

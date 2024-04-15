@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Command;
+using Unity.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -69,6 +70,22 @@ public class InAirState : MovableState
     }
 
     private bool isFalling(Rigidbody2D rigidbody) { return rigidbody.velocity.y < 0.0f; }
+}
+
+public class MonsterState : BaseState
+{
+    public virtual BaseState Update(GameObject actor) { return this; }
+    public virtual BaseState FixedUpdate(GameObject actor) { return this; }
+    public virtual void OnStateStart(GameObject actor) {}
+}
+
+public class MonsterOnLandState : MonsterState
+{
+    public override BaseState FixedUpdate(GameObject actor) {
+        Monster monster = actor.GetComponent<Monster>();
+        monster.ExecuteCommand(x => x is MonsterMoveCommand);
+        return this;
+    }
 }
 
 }
