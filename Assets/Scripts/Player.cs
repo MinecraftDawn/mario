@@ -36,7 +36,6 @@ public class Player : ActorBase
     // Update is called once per frame
     public override void Update()
     {
-        
         base.Update();
     }
 
@@ -71,4 +70,6 @@ public class Player : ActorBase
         RaycastHit2D hit = Physics2D.Raycast(transform.position + new Vector3(0, 0.5f, 0), -Vector2.up, 1.0f, ground_mask);
         return hit ? hit : null; // check hit.collider is empty or not
     }
+
+    protected override BaseState InitialState() { return new OnLandState(); }
 }
