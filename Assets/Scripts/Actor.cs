@@ -69,7 +69,7 @@ public abstract class ActorBase : MonoBehaviour {
     public Vector2 GetGroundDirection() { return _groundDirection; }
 
     public virtual BaseCommand GetCommand(int idx) { return _commandList[idx]; }
-    public virtual bool IsContainCommand<Command>() {return _commandList.Any(x => x is Command);}
+    public virtual bool IsContainCommand<Command>() { return _commandList.Any(x => x is Command);}
     public virtual int GetCommandListSize() { return _commandList.Count; }
     public virtual void CleanCommandList() { _commandList.Clear(); }
     public virtual IEnumerable<BaseCommand> GetCommandListEnumable() { return _commandList; }

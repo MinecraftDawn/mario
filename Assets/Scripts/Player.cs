@@ -44,6 +44,13 @@ public class Player : ActorBase
         base.FixedUpdate();
     }
 
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "MonsterBody") {
+            Debug.Log("player is hitten by monster!");
+        }
+    }
+
     public override void SetFriction(string friction_type)
     {
         if (friction_type == "full") {
