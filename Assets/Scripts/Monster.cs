@@ -13,6 +13,7 @@ public class Monster : ActorBase
 
     public StrategyChoice strategyChoice;
     private Strategy.MonsterAI _strategy;
+    public bool _moveToRight = true;
 
     // Start is called before the first frame update
     public override void Start()
@@ -39,6 +40,9 @@ public class Monster : ActorBase
         if (!ReferenceEquals(oldState, _state)) { _state.OnStateStart(gameObject); }
         _commandList.Clear();
     }
+
+    public void TurnAround() { _moveToRight = !_moveToRight;}
+    public bool GetMoveToRight() { return _moveToRight; }
 
     protected override RaycastHit2D? DetectGround()
     {
