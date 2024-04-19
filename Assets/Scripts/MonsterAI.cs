@@ -12,7 +12,11 @@ public interface MonsterAI
 
 public class KeepMove : MonsterAI
 {
-    public BaseCommand Decide(Monster monster) { return new MonsterMoveCommand(); }
+    public BaseCommand Decide(Monster monster) 
+    {
+        if (monster.IsFrontWall()) { monster.TurnAround(); }
+        return new MonsterMoveCommand();
+    }
 }
 
 }
