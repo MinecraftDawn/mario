@@ -14,16 +14,6 @@ public class Player : ActorBase
     private Vector2 _capsuleSize;
     public PhysicsMaterial2D fullFriction;
     public PhysicsMaterial2D noFriction;
-    public Vector2 groundCastBoxSize;
-    public Vector2 groundCastCenterOffset;
-    public float groundCastDist;  // ground detect cast distance
-
-    private void OnDrawGizmos()
-    {
-        Vector2 center = transform.position;
-        center += groundCastCenterOffset;
-        Gizmos.DrawWireCube(center - Vector2.up * groundCastDist, groundCastBoxSize);
-    }
 
     // Start is called before the first frame update
     public override void Start()
@@ -51,24 +41,6 @@ public class Player : ActorBase
         } else if (friction_type == "none") {
             _capsuleCollider.sharedMaterial = noFriction;
         }
-    }
-
-    protected override RaycastHit2D? DetectGround()
-    {
-        LayerMask ground_mask = LayerMask.GetMask("Ground");
-        Vector2 center = transform.position;
-        center += groundCastCenterOffset;
-        RaycastHit2D hit = Physics2D.BoxCast(center, 
-            groundCastBoxSize, 0, -Vector2.up, groundCastDist, ground_mask);
-        return hit ? hit : null; // check hit.collider is empty or not
-    }
-
-    protected override RaycastHit2D? DetectSlope()
-    {
-        LayerMask ground_mask = LayerMask.GetMask("Ground");
-        // TODO: now is hard coded, try to extract the parameter to unity property
-        RaycastHit2D hit = Physics2D.Raycast(transform.position + new Vector3(0, 0.5f, 0), -Vector2.up, 1.0f, ground_mask);
-        return hit ? hit : null; // check hit.collider is empty or not
     }
 
     protected override BaseState InitialState() { return new OnLandState(); }
