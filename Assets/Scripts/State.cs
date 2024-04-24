@@ -38,6 +38,8 @@ public class OnLandState : MovableState
             player.SetFriction("full");
         }
         base.FixedUpdate(actor);
+
+        player.ExecuteCommand(x => x is TestCommand);
         
         bool existJump = player.ExecuteCommand(x => x is JumpCommand);
         if (existJump || !player.IsOnGround()) { return new InAirState(); }

@@ -48,4 +48,11 @@ public class JumpCommand : PlayerCommand
         rigidbody.AddForce(Vector2.up * player.jumpForce, ForceMode2D.Impulse); 
     }
 }
+
+public class TestCommand : PlayerCommand {
+    public override void Execute(GameObject gameObject)
+    {
+        Debug.Log("For Test");
+    }
+}
 }

@@ -38,6 +38,7 @@ public abstract class ActorBase : MonoBehaviour {
         BaseState oldState = _state;
         _state = _state.FixedUpdate(gameObject);
         if (!ReferenceEquals(oldState, _state)) { _state.OnStateStart(gameObject); }
+        CleanCommandList();
     }
 
     // TODO: maybe define the function in the child class rather than here.
