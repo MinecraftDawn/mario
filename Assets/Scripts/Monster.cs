@@ -53,11 +53,6 @@ public class Monster : ActorBase
         _frontWall = DetectFrontWall() != null;
     }
 
-    protected override BaseState InitialState() { return new MonsterOnLandState(); }
-
-    public void TurnAround() { _moveToRight = !_moveToRight;}
-    public bool GetMoveToRight() { return _moveToRight; }
-
     protected RaycastHit2D? DetectFrontWall()
     {
         LayerMask ground_mask = LayerMask.GetMask("Ground");
@@ -78,5 +73,15 @@ public class Monster : ActorBase
         return null;
     }
 
+    protected override BaseState InitialState() { return new MonsterOnLandState(); }
+
     public bool IsFrontWall() { return _frontWall; }
+    public bool GetMoveToRight() { return _moveToRight; }
+    public void TurnAround()
+    {
+        Vector3 scale = transform.localScale;
+        scale.x *= -1f;
+        transform.localScale = scale;
+        _moveToRight = !_moveToRight;
+    }
 }
