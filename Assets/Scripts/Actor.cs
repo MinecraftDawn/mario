@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Actor {
 public abstract class ActorBase : MonoBehaviour {
     protected BaseState _state;
-    protected List<BaseCommand> _commandList;
+    protected HashSet<BaseCommand> _commandSet;
     protected Rigidbody2D _rigidbody;
     protected bool _onGround;
     protected bool _onSlope;
@@ -22,7 +22,7 @@ public abstract class ActorBase : MonoBehaviour {
     public virtual void Start()
     {
         _state = new OnLandState();
-        _commandList = new List<BaseCommand>();
+        _commandSet = new HashSet<BaseCommand>();
         _rigidbody = GetComponent<Rigidbody2D>();
     }
 
@@ -70,22 +70,19 @@ public abstract class ActorBase : MonoBehaviour {
     public bool IsStateType<State>() { return _state is State; }
     public Vector2 GetGroundDirection() { return _groundDirection; }
 
-    public virtual BaseCommand GetCommand(int idx) { return _commandList[idx]; }
-    public virtual bool IsContainCommand<Command>() {return _commandList.Any(x => x is Command);}
-    public virtual int GetCommandListSize() { return _commandList.Count; }
-    public virtual void CleanCommandList() { _commandList.Clear(); }
-    public virtual IEnumerable<BaseCommand> GetCommandListEnumable() { return _commandList; }
-    public virtual void ReceiveCommands(BaseCommand command) { _commandList.Add(command); }
-    public virtual void ExecuteCommand(int idx) { _commandList[idx].Execute(gameObject); }
+    public virtual bool IsContainCommand<Command>() {return _commandSet.Any(x => x is Command);}
+    public virtual int GetCommandListSize() { return _commandSet.Count; }
+    public virtual void CleanCommandList() { _commandSet.Clear(); }
+    public virtual IEnumerable<BaseCommand> GetCommandListEnumable() { return _commandSet; }
+    public virtual void ReceiveCommands(BaseCommand command) { _commandSet.Add(command); }
 
-    public virtual bool ExecuteCommand(Func<BaseCommand, bool> condition)
-    {
-        var commands = _commandList.Where(condition);
-        foreach (var command in commands) {
-            command.Execute(gameObject);
-        }
-
-        return commands.Count() > 0;
+    public virtual bool ExecuteCommand<Command>() {
+        
+        var command = _commandSet.FirstOrDefault(x => x is Command);
+        if (command is null) return false;
+        
+        command.Execute(gameObject);
+        return true;
     }
 }
 }
