@@ -51,8 +51,10 @@ public class OnLandState : MovableState
     }
 }
 
-public class InAirState : MovableState
-{ 
+public class InAirState : MovableState{
+    // Avoid detecting the ground at the moment of jumping and changing the state to OnLandState
+    private int _freezeTick = 1;
+    
     public override BaseState FixedUpdate(GameObject actor)
     {
         base.FixedUpdate(actor);
@@ -61,8 +63,9 @@ public class InAirState : MovableState
         Vector2 velocity = agent.velocity;
         velocity.y = Mathf.Max(velocity.y, -agent.maxFallSpeed);
         agent.velocity = velocity;
-        
-        if (!agent.IsOnGround()) { return this; }
+
+        _freezeTick--;
+        if (_freezeTick >= 0 || !agent.IsOnGround()) { return this; }
         
         return new OnLandState();
     }
