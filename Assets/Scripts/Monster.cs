@@ -13,6 +13,7 @@ public class Monster : ActorBase
 
     public StrategyChoice strategyChoice;
     public float frontWallDetectRayLength = 0.1f;
+    public Detector detector;
     private Strategy.MonsterAI _strategy;
     private CapsuleCollider2D _capsuleCollider;
     private Vector2 _capsuleSize;
@@ -51,6 +52,7 @@ public class Monster : ActorBase
     {
         base.CollectState();
         _frontWall = DetectFrontWall() != null;
+        if (detector.IsDetected()) { Debug.Log(detector.GetDetectedObject()); }
     }
 
     protected RaycastHit2D? DetectFrontWall()
