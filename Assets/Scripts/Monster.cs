@@ -45,7 +45,7 @@ public class Monster : ActorBase
     protected override void PreparationBeforeFixedUpdate()
     {
         CollectState();
-        _commandList.Add(_strategy.Decide(this));
+        _strategy.Decide(this);
     }
 
     protected override void CollectState()

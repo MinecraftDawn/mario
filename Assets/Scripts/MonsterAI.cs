@@ -7,15 +7,15 @@ namespace Strategy {
 
 public interface MonsterAI
 {
-    public BaseCommand Decide(Monster monster);
+    public void Decide(Monster monster);
 }
 
 public class KeepMove : MonsterAI
 {
-    public BaseCommand Decide(Monster monster) 
+    public void Decide(Monster monster) 
     {
         if (monster.IsFrontWall()) { monster.TurnAround(); }
-        return new MonsterMoveCommand();
+        monster.ReceiveCommands(new MonsterMoveCommand());
     }
 }
 
