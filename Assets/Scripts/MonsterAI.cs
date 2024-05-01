@@ -15,6 +15,7 @@ public class KeepMove : MonsterAI
     public void Decide(Monster monster) 
     {
         if (monster.IsFrontWall()) { monster.TurnAround(); }
+        if (monster.IsPlayerFound()) { Debug.Log("player found!!"); }
         // if (monster.IsFrontWall()) { monster.ReceiveCommands(new JumpCommand()); }
         monster.ReceiveCommands(new MonsterMoveCommand());
     }

@@ -13,10 +13,13 @@ public class Monster : ActorBase
 
     public StrategyChoice strategyChoice;
     public float frontWallDetectRayLength = 0.1f;
+    public float playerDetectTime = 3f;
     public Detector detector;
     private Strategy.MonsterAI _strategy;
     private CapsuleCollider2D _capsuleCollider;
     private Vector2 _capsuleSize;
+    private GameObject _player;
+    private float _playerDetectTimer;
     protected bool _frontWall;
     protected bool _moveToRight = true;
 
@@ -28,12 +31,18 @@ public class Monster : ActorBase
         _strategy = CreateStrategy();
         _capsuleCollider = GetComponent<CapsuleCollider2D>();
         _capsuleSize = _capsuleCollider.size;
+        _player = null;
     }
 
     // Update is called once per frame
     public override void Update()
     {
         base.Update();
+        if (_playerDetectTimer > 0.0f) {
+            _playerDetectTimer -= Time.deltaTime;
+        } else {
+            _player = null;
+        }
     }
 
     public override void FixedUpdate()
@@ -52,7 +61,11 @@ public class Monster : ActorBase
     {
         base.CollectState();
         _frontWall = DetectFrontWall() != null;
-        if (detector.IsDetected()) { Debug.Log(detector.GetDetectedObject()); }
+        // detect player
+        if (detector.IsDetected()) {
+            _player = detector.GetDetectedObject();
+            _playerDetectTimer = playerDetectTime;
+        }
     }
 
     protected RaycastHit2D? DetectFrontWall()
@@ -78,7 +91,9 @@ public class Monster : ActorBase
     protected override BaseState InitialState() { return new MonsterOnLandState(); }
 
     public bool IsFrontWall() { return _frontWall; }
+    public bool IsPlayerFound() { return _player != null; }
     public bool GetMoveToRight() { return _moveToRight; }
+    public GameObject GetPlayer() { return _player; }
     public void TurnAround()
     {
         Vector3 scale = transform.localScale;

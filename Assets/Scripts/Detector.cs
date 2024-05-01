@@ -8,7 +8,6 @@ public class Detector : MonoBehaviour
     public float detectInterval = 0.03f;
     protected bool _detected = false;
     protected GameObject detectedObject = null;
-    private float timer = 0.0f;
 
     void Start()
     {
@@ -21,7 +20,6 @@ public class Detector : MonoBehaviour
         while (true) {
             yield return wait;
             Debug.Log("Check");
-            timer = detectInterval;
             Collider2D collide = Detect();
             _detected = collide;
             detectedObject = _detected ? collide.gameObject : null;
