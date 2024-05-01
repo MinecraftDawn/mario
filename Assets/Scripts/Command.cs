@@ -41,11 +41,11 @@ public class JumpCommand : PlayerCommand
     public override void Execute(GameObject gameObject)
     {
         Rigidbody2D rigidbody = gameObject.GetComponent<Rigidbody2D>();
-        Player player = gameObject.GetComponent<Player>();
+        Actor.ActorBase actor = gameObject.GetComponent<Actor.ActorBase>();
         Vector2 new_velocity = rigidbody.velocity;
         new_velocity.y = 0f;
         rigidbody.velocity = new_velocity;
-        rigidbody.AddForce(Vector2.up * player.jumpForce, ForceMode2D.Impulse); 
+        rigidbody.AddForce(Vector2.up * actor.jumpForce, ForceMode2D.Impulse); 
     }
 }
 
@@ -59,7 +59,6 @@ public class MonsterMoveCommand : MonsterCommand
     // Need refactor: the argument of Execute should be Actor
     public override void Execute(GameObject gameObject)
     {
-        Debug.Log("Monster is trying to move forward");
         Monster monster = gameObject.GetComponent<Monster>();
         Vector2 velocity = monster.velocity;
         float direction = monster.GetMoveToRight() ? 1 : -1;
