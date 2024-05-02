@@ -12,12 +12,30 @@ public interface MonsterAI
 
 public class KeepMove : MonsterAI
 {
-    public void Decide(Monster monster) 
+    public virtual void Decide(Monster monster) 
     {
         if (monster.IsFrontWall()) { monster.TurnAround(); }
-        if (monster.IsPlayerFound()) { Debug.Log("player found!!"); }
-        // if (monster.IsFrontWall()) { monster.ReceiveCommands(new JumpCommand()); }
         monster.ReceiveCommands(new MonsterMoveCommand());
+    }
+}
+
+public class TracePlayer : KeepMove
+{
+    public override void Decide(Monster monster)
+    {
+        if (!monster.IsPlayerFound()) {
+            base.Decide(monster);
+        } else {
+            // trace player
+            Vector2 monster_to_player = 
+                monster.GetPlayer().transform.position - monster.transform.position;
+            if ((monster.GetMoveToRight() && monster_to_player.x < 0f) ||
+                (!monster.GetMoveToRight() && monster_to_player.x > 0f)) {
+                monster.TurnAround();
+            }
+            if (monster.IsFrontWall()) { monster.ReceiveCommands(new JumpCommand()); }
+            monster.ReceiveCommands(new MonsterMoveCommand());
+        }
     }
 }
 

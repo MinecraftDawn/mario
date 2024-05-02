@@ -9,6 +9,7 @@ public class Monster : ActorBase
     public enum StrategyChoice
     {
         KeepMove,
+        TracePlayer,
     }
 
     public StrategyChoice strategyChoice;
@@ -62,7 +63,7 @@ public class Monster : ActorBase
         base.CollectState();
         _frontWall = DetectFrontWall() != null;
         // detect player
-        if (detector.IsDetected()) {
+        if (detector != null && detector.IsDetected()) {
             _player = detector.GetDetectedObject();
             _playerDetectTimer = playerDetectTime;
         }
@@ -84,6 +85,8 @@ public class Monster : ActorBase
     {
         if (strategyChoice == StrategyChoice.KeepMove) {
             return new Strategy.KeepMove();
+        } else if (strategyChoice == StrategyChoice.TracePlayer) {
+            return new Strategy.TracePlayer();
         }
         return null;
     }
