@@ -70,7 +70,7 @@ public abstract class ActorBase : MonoBehaviour {
     public bool IsStateType<State>() { return _state is State; }
     public Vector2 GetGroundDirection() { return _groundDirection; }
 
-    public virtual bool IsContainCommand<Command>() {return _commandSet.Any(x => x is Command); }
+    public virtual bool IsContainCommand<Command>() { return _commandSet.Any(x => x is Command); }
     public virtual int GetCommandListSize() { return _commandSet.Count; }
     public virtual void CleanCommandList() { _commandSet.Clear(); }
     public virtual IEnumerable<BaseCommand> GetCommandListEnumable() { return _commandSet; }
