@@ -18,6 +18,6 @@ class InputHandler : MonoBehaviour
         if (Input.GetKey(KeyCode.UpArrow)) { player.GetComponent<Player>().ReceiveCommands(new JumpCommand()); }
         
         // For Test
-        if(Input.GetKeyDown(KeyCode.Space)) { player.GetComponent<Player>().ReceiveCommands(new TestCommand());}
+        if(Input.GetKeyDown(KeyCode.Space)) { player.GetComponent<Player>().ReceiveCommands(new TestCommand()); }
     }
 }
