@@ -39,7 +39,7 @@ public class OnLandState : MovableState
         }
         base.FixedUpdate(actor);
 
-        player.ExecuteCommand<TestCommand>();
+        player.ExecuteCommand<TestCommand>(); // Just for test getKeyDown / Up
         
         bool existJump = player.ExecuteCommand<JumpCommand>();
         if (existJump || !player.IsOnGround()) { return new InAirState(); }
