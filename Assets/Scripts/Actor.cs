@@ -77,8 +77,10 @@ public abstract class ActorBase : MonoBehaviour {
     public virtual void ReceiveCommands(BaseCommand command) { _commandSet.Add(command); }
 
     public virtual bool ExecuteCommand<Command>() {
-
-    
+        BaseCommand? command = _commandSet.FirstOrDefault(x => x is Command);
+        if (command is null) return false;
+        
+        command.Execute(gameObject);
         return true;
     }
 }
