@@ -9,6 +9,7 @@ public class BoxDetector : Detector
     public Color undetectedColor;
     public Color detectedColor;
     public LayerMask detectedLayer;
+    public LayerMask obstacleLayer;
 
     private void OnDrawGizmos()
     {
@@ -24,6 +25,17 @@ public class BoxDetector : Detector
         Vector2 region_box = Vector2.zero;
         region_box.x = boxWidth;
         region_box.y = boxHight;
-        return Physics2D.OverlapBox(transform.position, region_box, 0f, detectedLayer);
+        Collider2D collider = Physics2D.OverlapBox(transform.position, region_box, 0f, detectedLayer);
+
+        if (collider) {
+            Vector2 collider_center = collider.transform.position + (Vector3)collider.offset;
+            Vector2 object_center =
+                transform.parent.position + (Vector3)transform.parent.GetComponent<Collider2D>().offset;
+            Vector2 toward = collider_center - object_center;
+
+            RaycastHit2D hit = Physics2D.Raycast(object_center, toward, toward.magnitude, obstacleLayer);
+            if (!hit) { return collider; }
+        }
+        return null;
     }
 }
