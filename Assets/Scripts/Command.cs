@@ -56,6 +56,11 @@ public class MonsterCommand : BaseCommand
 
 public class MonsterMoveCommand : MonsterCommand
 {
+    private float speedUp;
+
+    public MonsterMoveCommand() { speedUp = 1f; }
+    public MonsterMoveCommand(float speed_up) { speedUp = speed_up; }
+
     // Need refactor: the argument of Execute should be Actor
     public override void Execute(GameObject gameObject)
     {
@@ -63,9 +68,9 @@ public class MonsterMoveCommand : MonsterCommand
         Vector2 velocity = monster.velocity;
         float direction = monster.GetMoveToRight() ? 1 : -1;
         if (monster.IsOnGround() && monster.IsOnSlope()) {
-            velocity = monster.GetGroundDirection() * monster.horizontalSpeed * direction;
+            velocity = monster.GetGroundDirection() * monster.horizontalSpeed * direction * speedUp;
         } else {
-            velocity.x = monster.horizontalSpeed * direction;
+            velocity.x = monster.horizontalSpeed * direction * speedUp;
         }
         monster.velocity = velocity;
     }
