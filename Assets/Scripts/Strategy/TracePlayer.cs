@@ -3,24 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Command;
 
-namespace Strategy {
-
-public interface MonsterAI
+namespace Strategy
 {
-    public void Decide(Monster monster);
-}
-
-public class KeepMove : MonsterAI
-{
-    public virtual void Decide(Monster monster) 
-    {
-        if (monster.IsFrontWall()) { monster.TurnAround(); }
-        monster.ReceiveCommands(new MonsterMoveCommand());
-    }
-}
 
 public class TracePlayer : KeepMove
 {
+    public float speedUpWhenTracing = 1.5f;
+
     public override void Decide(Monster monster)
     {
         if (!monster.IsPlayerFound()) {
@@ -40,7 +29,7 @@ public class TracePlayer : KeepMove
             monster.TurnAround();
         }
         if (monster.IsFrontWall()) { monster.ReceiveCommands(new JumpCommand()); }
-        monster.ReceiveCommands(new MonsterMoveCommand(1.5f));
+        monster.ReceiveCommands(new MonsterMoveCommand(speedUpWhenTracing));
     }
 }
 

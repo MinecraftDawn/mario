@@ -6,13 +6,6 @@ using State;
 
 public class Monster : ActorBase
 {
-    public enum StrategyChoice
-    {
-        KeepMove,
-        TracePlayer,
-    }
-
-    public StrategyChoice strategyChoice;
     public float frontWallDetectRayLength = 0.1f;
     public float playerDetectTime = 3f;
     public Detector detector;
@@ -29,7 +22,7 @@ public class Monster : ActorBase
     {
         // Need refactor
         base.Start();
-        _strategy = CreateStrategy();
+        _strategy = GetComponent<Strategy.MonsterAI>();
         _capsuleCollider = GetComponent<CapsuleCollider2D>();
         _capsuleSize = _capsuleCollider.size;
         _player = null;
@@ -55,7 +48,7 @@ public class Monster : ActorBase
     protected override void PreparationBeforeFixedUpdate()
     {
         CollectState();
-        _strategy.Decide(this);
+        if (_strategy != null) { _strategy.Decide(this); }
     }
 
     protected override void CollectState()
@@ -79,16 +72,6 @@ public class Monster : ActorBase
         RaycastHit2D hit = Physics2D.Raycast(start_position, direction, ray_length, ground_mask);
         Debug.DrawRay(start_position, direction * ray_length, Color.red);
         return hit ? hit : null;
-    }
-
-    protected Strategy.MonsterAI CreateStrategy()
-    {
-        if (strategyChoice == StrategyChoice.KeepMove) {
-            return new Strategy.KeepMove();
-        } else if (strategyChoice == StrategyChoice.TracePlayer) {
-            return new Strategy.TracePlayer();
-        }
-        return null;
     }
 
     protected override BaseState InitialState() { return new MonsterOnLandState(); }
