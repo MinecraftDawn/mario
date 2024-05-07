@@ -28,14 +28,14 @@ public class BoxDetector : Detector
         Collider2D collider = Physics2D.OverlapBox(transform.position, region_box, 0f, detectedLayer);
 
         if (collider) {
-            Vector2 collider_center = collider.transform.position + (Vector3)collider.offset;
+            Vector2 collider_center = (Vector2)collider.transform.position + collider.offset;
             Vector2 object_center =
                 transform.parent.position + (Vector3)transform.parent.GetComponent<Collider2D>().offset;
             Vector2 toward = collider_center - object_center;
 
             RaycastHit2D hit = Physics2D.Raycast(object_center, toward, toward.magnitude, obstacleLayer);
-            if (!hit) { return collider; }
+            if (hit) { return null; }
         }
-        return null;
+        return collider;
     }
 }
