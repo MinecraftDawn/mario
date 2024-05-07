@@ -3,19 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using Command;
 
-namespace Strategy {
-
-public interface MonsterAI
+namespace Strategy
 {
-    public BaseCommand Decide(Monster monster);
-}
 
 public class KeepMove : MonsterAI
 {
-    public BaseCommand Decide(Monster monster) 
+    public override void Decide(Monster monster) 
     {
         if (monster.IsFrontWall()) { monster.TurnAround(); }
-        return new MonsterMoveCommand();
+        monster.ReceiveCommands(new MonsterMoveCommand());
     }
 }
 
