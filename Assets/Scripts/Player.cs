@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Command;
 using State;
 using Actor;
+using enums;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,11 +42,11 @@ public class Player : ActorBase
         }
     }
 
-    public override void SetFriction(string friction_type)
+    public override void SetFriction(FrictionType friction_type)
     {
-        if (friction_type == "full") {
+        if (friction_type == FrictionType.FULL) {
             _capsuleCollider.sharedMaterial = fullFriction;
-        } else if (friction_type == "none") {
+        } else if (friction_type == FrictionType.NONE) {
             _capsuleCollider.sharedMaterial = noFriction;
         }
     }

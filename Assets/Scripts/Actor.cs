@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Command;
+using enums;
 using State;
 using UnityEngine;
 
@@ -88,7 +89,7 @@ public abstract class ActorBase : MonoBehaviour {
 
     protected virtual BaseState InitialState() { return null; }
     protected virtual void PreparationBeforeFixedUpdate() { CollectState(); }
-    public virtual void SetFriction(string friction_type) {}
+    public virtual void SetFriction(FrictionType friction_type) {}
     public Vector2 velocity {
         get { return _rigidbody.velocity; }
         set { _rigidbody.velocity = value; }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Command;
+using enums;
 using Unity.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -34,9 +35,9 @@ public class OnLandState : MovableState
         // TODO: change to use parent class Actor.ActorBase
         Player player = actor.GetComponent<Player>();
         if (player.IsContainCommand<MoveCommand>()) {
-            player.SetFriction("none");
+            player.SetFriction(FrictionType.NONE);
         } else {
-            player.SetFriction("full");
+            player.SetFriction(FrictionType.FULL);
         }
         base.FixedUpdate(actor);
         
@@ -48,7 +49,7 @@ public class OnLandState : MovableState
 
     public override void OnStateStart(GameObject actor) {
         Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
-        agent.SetFriction("full");
+        agent.SetFriction(FrictionType.FULL);
     }
 }
 
@@ -66,7 +67,7 @@ public class InAirState : MovableState
     public override void OnStateStart(GameObject actor)
     {
         Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
-        agent.SetFriction("none");
+        agent.SetFriction(FrictionType.NONE);
     }
 
     private bool isFalling(Rigidbody2D rigidbody) { return rigidbody.velocity.y < 0.0f; }
