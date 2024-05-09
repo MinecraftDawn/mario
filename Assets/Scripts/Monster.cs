@@ -42,7 +42,6 @@ public class Monster : ActorBase
     public override void FixedUpdate()
     {
         base.FixedUpdate();
-        _commandList.Clear();
     }
 
     protected override void PreparationBeforeFixedUpdate()

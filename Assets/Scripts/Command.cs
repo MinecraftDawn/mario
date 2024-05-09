@@ -7,14 +7,22 @@ using UnityEngine;
 
 namespace Command
 {
-public interface BaseCommand
+public abstract class BaseCommand
 {
-    public void Execute(GameObject gameObject);
+    public virtual void Execute(GameObject gameObject) { }
+
+    public override bool Equals(object obj) {
+        return GetType().FullName.Equals(obj.GetType().FullName);
+    }
+    
+    public override int GetHashCode() {
+        return GetType().FullName.GetHashCode();
+    }
 }
 
 public class PlayerCommand : BaseCommand
 {
-    public virtual void Execute(GameObject gameObject) {}
+    public override void Execute(GameObject gameObject) {}
 }
 
 public class MoveCommand : PlayerCommand
@@ -49,9 +57,16 @@ public class JumpCommand : PlayerCommand
     }
 }
 
+public class TestCommand : PlayerCommand {
+    public override void Execute(GameObject gameObject)
+    {
+        Debug.Log("For Test");
+    }
+}
+
 public class MonsterCommand : BaseCommand
 {
-    public virtual void Execute(GameObject gameObject) {}
+    public override void Execute(GameObject gameObject) {}
 }
 
 public class MonsterMoveCommand : MonsterCommand
