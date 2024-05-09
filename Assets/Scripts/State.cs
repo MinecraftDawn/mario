@@ -19,7 +19,7 @@ public class MovableState : BaseState
     public virtual BaseState Update(GameObject actor) { return this; }
     public virtual BaseState FixedUpdate(GameObject actor) {
         Player player = actor.GetComponent<Player>();
-        player.ExecuteCommand(x => x is MoveCommand);
+        player.ExecuteCommand<MoveCommand>();
         return this;
     }
 
@@ -38,8 +38,10 @@ public class OnLandState : MovableState
             player.SetFriction("full");
         }
         base.FixedUpdate(actor);
+
+        player.ExecuteCommand<TestCommand>(); // Just for test getKeyDown / Up
         
-        bool existJump = player.ExecuteCommand(x => x is JumpCommand);
+        bool existJump = player.ExecuteCommand<JumpCommand>();
         if (existJump || !player.IsOnGround()) { return new InAirState(); }
 
         return this;
@@ -51,15 +53,23 @@ public class OnLandState : MovableState
     }
 }
 
-public class InAirState : MovableState
-{ 
+public class InAirState : MovableState{
+    // Avoid detecting the ground at the moment of jumping and changing the state to OnLandState
+    private int _freezeTick = 1;
+    
     public override BaseState FixedUpdate(GameObject actor)
     {
         base.FixedUpdate(actor);
         Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
-        if (!agent.IsOnGround()) { return this; }
         
-        return new OnLandState();
+        Vector2 velocity = agent.velocity;
+        velocity.y = Mathf.Max(velocity.y, -agent.maxFallSpeed);
+        agent.velocity = velocity;
+
+        _freezeTick--;
+        if (_freezeTick < 0 && agent.IsOnGround() && agent.IsFalling()) { return new OnLandState(); }
+        
+        return this;
     }
 
     public override void OnStateStart(GameObject actor)
