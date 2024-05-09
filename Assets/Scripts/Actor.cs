@@ -13,6 +13,7 @@ public abstract class ActorBase : MonoBehaviour {
     protected Rigidbody2D _rigidbody;
     protected bool _onGround;
     protected bool _onSlope;
+    protected bool _isFalling;
     protected Vector2 _groundDirection;
     public float horizontalSpeed = 3f;
     public float jumpForce = 3f;
@@ -60,6 +61,7 @@ public abstract class ActorBase : MonoBehaviour {
     {
         _onGround = DetectGround() != null;
         _onSlope = false;
+        _isFalling = IsStateType<InAirState>() && _rigidbody.velocity.y < 0f;
         RaycastHit2D? result = DetectSlope();
         if (result != null) {
             RaycastHit2D slope_hit = result.Value;
@@ -97,6 +99,7 @@ public abstract class ActorBase : MonoBehaviour {
     }
     public bool IsOnGround() { return _onGround; }
     public bool IsOnSlope() { return _onSlope; }
+    public bool IsFalling() { return _isFalling; }
     public Type GetStateType() { return _state.GetType(); }
 
     public bool IsStateType<State>() { return _state is State; }

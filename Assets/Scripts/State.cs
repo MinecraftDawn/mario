@@ -67,9 +67,9 @@ public class InAirState : MovableState{
         agent.velocity = velocity;
 
         _freezeTick--;
-        if (_freezeTick >= 0 || !agent.IsOnGround()) { return this; }
+        if (_freezeTick < 0 && agent.IsOnGround() && agent.IsFalling()) { return new OnLandState(); }
         
-        return new OnLandState();
+        return this;
     }
 
     public override void OnStateStart(GameObject actor)
