@@ -94,7 +94,7 @@ public class MonsterOnLandState : MonsterState
 {
     public override BaseState FixedUpdate(GameObject actor) {
         Monster monster = actor.GetComponent<Monster>();
-        bool x = monster.ExecuteCommand<MonsterMoveCommand>();
+        bool x = monster.ExecuteCommand<MoveCommand>();
 
         bool exist_jump = monster.ExecuteCommand<JumpCommand>();
         if (exist_jump || !monster.IsOnGround()) { return new MonsterInAirState(); }
@@ -108,7 +108,7 @@ public class MonsterInAirState : MonsterState
     public override BaseState FixedUpdate(GameObject actor)
     {
         Monster monster = actor.GetComponent<Monster>();
-        monster.ExecuteCommand<MonsterMoveCommand>();
+        monster.ExecuteCommand<MoveCommand>();
 
         if (monster.IsOnGround()) { return new MonsterOnLandState(); }
         return this;
