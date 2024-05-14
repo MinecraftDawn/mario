@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Command;
+using Unity.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -41,8 +42,8 @@ public class OnLandState : MovableState
 
         player.ExecuteCommand<TestCommand>(); // Just for test getKeyDown / Up
         
-        bool existJump = player.ExecuteCommand<JumpCommand>();
-        if (existJump || !player.IsOnGround()) { return new InAirState(); }
+        bool exist_jump = player.ExecuteCommand<JumpCommand>();
+        if (exist_jump || !player.IsOnGround()) { return new InAirState(); }
 
         return this;
     }
@@ -79,6 +80,38 @@ public class InAirState : MovableState{
     }
 
     private bool isFalling(Rigidbody2D rigidbody) { return rigidbody.velocity.y < 0.0f; }
+}
+
+public class MonsterState : BaseState
+{
+    public virtual BaseState Update(GameObject actor) { return this; }
+    public virtual BaseState FixedUpdate(GameObject actor) { return this; }
+    public virtual void OnStateStart(GameObject actor) {}
+}
+
+public class MonsterOnLandState : MonsterState
+{
+    public override BaseState FixedUpdate(GameObject actor) {
+        Monster monster = actor.GetComponent<Monster>();
+        bool x = monster.ExecuteCommand<MonsterMoveCommand>();
+
+        bool exist_jump = monster.ExecuteCommand<JumpCommand>();
+        if (exist_jump || !monster.IsOnGround()) { return new MonsterInAirState(); }
+
+        return this;
+    }
+}
+
+public class MonsterInAirState : MonsterState
+{
+    public override BaseState FixedUpdate(GameObject actor)
+    {
+        Monster monster = actor.GetComponent<Monster>();
+        monster.ExecuteCommand<MonsterMoveCommand>();
+
+        if (monster.IsOnGround()) { return new MonsterOnLandState(); }
+        return this;
+    }
 }
 
 }

@@ -49,11 +49,11 @@ public class JumpCommand : PlayerCommand
     public override void Execute(GameObject gameObject)
     {
         Rigidbody2D rigidbody = gameObject.GetComponent<Rigidbody2D>();
-        Player player = gameObject.GetComponent<Player>();
+        Actor.ActorBase actor = gameObject.GetComponent<Actor.ActorBase>();
         Vector2 new_velocity = rigidbody.velocity;
         new_velocity.y = 0f;
         rigidbody.velocity = new_velocity;
-        rigidbody.AddForce(Vector2.up * player.jumpForce, ForceMode2D.Impulse); 
+        rigidbody.AddForce(Vector2.up * actor.jumpForce, ForceMode2D.Impulse); 
     }
 }
 
@@ -63,4 +63,32 @@ public class TestCommand : PlayerCommand {
         Debug.Log("For Test");
     }
 }
+
+public class MonsterCommand : BaseCommand
+{
+    public override void Execute(GameObject gameObject) {}
+}
+
+public class MonsterMoveCommand : MonsterCommand
+{
+    private float speedUp;
+
+    public MonsterMoveCommand() { speedUp = 1f; }
+    public MonsterMoveCommand(float speed_up) { speedUp = speed_up; }
+
+    // Need refactor: the argument of Execute should be Actor
+    public override void Execute(GameObject gameObject)
+    {
+        Monster monster = gameObject.GetComponent<Monster>();
+        Vector2 velocity = monster.velocity;
+        float direction = monster.GetMoveToRight() ? 1 : -1;
+        if (monster.IsOnGround() && monster.IsOnSlope()) {
+            velocity = monster.GetGroundDirection() * monster.horizontalSpeed * direction * speedUp;
+        } else {
+            velocity.x = monster.horizontalSpeed * direction * speedUp;
+        }
+        monster.velocity = velocity;
+    }
+}
+
 }
