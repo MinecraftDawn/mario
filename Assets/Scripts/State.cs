@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Actor;
 using Command;
 using enums;
 using Unity.Collections;
@@ -11,29 +12,29 @@ using UnityEngine;
 namespace State {
 public interface BaseState
 {
-    public BaseState Update(GameObject actor);
-    public BaseState FixedUpdate(GameObject actor);
-    public void OnStateStart(GameObject actor);
+    public BaseState Update(ActorBase actor);
+    public BaseState FixedUpdate(ActorBase actor);
+    public void OnStateStart(ActorBase actor);
 }
 
 public class MovableState : BaseState
 {
-    public virtual BaseState Update(GameObject actor) { return this; }
-    public virtual BaseState FixedUpdate(GameObject actor) {
-        Player player = actor.GetComponent<Player>();
+    public virtual BaseState Update(ActorBase actor) { return this; }
+    public virtual BaseState FixedUpdate(ActorBase actor) {
+        Player player = (Player) actor;
         player.ExecuteCommand<MoveCommand>();
         return this;
     }
 
-    public virtual void OnStateStart(GameObject actor) { }
+    public virtual void OnStateStart(ActorBase actor) { }
 }
 
 public class OnLandState : MovableState
 {
-    public override BaseState FixedUpdate(GameObject actor)
+    public override BaseState FixedUpdate(ActorBase actor)
     {
         // TODO: change to use parent class Actor.ActorBase
-        Player player = actor.GetComponent<Player>();
+        Player player = (Player) actor;
         if (player.IsContainCommand<MoveCommand>()) {
             player.SetFriction(FrictionType.NONE);
         } else {
@@ -49,7 +50,7 @@ public class OnLandState : MovableState
         return this;
     }
 
-    public override void OnStateStart(GameObject actor) {
+    public override void OnStateStart(ActorBase actor) {
         Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
         agent.SetFriction(FrictionType.FULL);
     }
@@ -59,7 +60,7 @@ public class InAirState : MovableState{
     // Avoid detecting the ground at the moment of jumping and changing the state to OnLandState
     private int _freezeTick = 1;
     
-    public override BaseState FixedUpdate(GameObject actor)
+    public override BaseState FixedUpdate(ActorBase actor)
     {
         base.FixedUpdate(actor);
         Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
@@ -74,7 +75,7 @@ public class InAirState : MovableState{
         return this;
     }
 
-    public override void OnStateStart(GameObject actor)
+    public override void OnStateStart(ActorBase actor)
     {
         Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
         agent.SetFriction(FrictionType.NONE);
@@ -85,15 +86,15 @@ public class InAirState : MovableState{
 
 public class MonsterState : BaseState
 {
-    public virtual BaseState Update(GameObject actor) { return this; }
-    public virtual BaseState FixedUpdate(GameObject actor) { return this; }
-    public virtual void OnStateStart(GameObject actor) {}
+    public virtual BaseState Update(ActorBase actor) { return this; }
+    public virtual BaseState FixedUpdate(ActorBase actor) { return this; }
+    public virtual void OnStateStart(ActorBase actor) {}
 }
 
 public class MonsterOnLandState : MonsterState
 {
-    public override BaseState FixedUpdate(GameObject actor) {
-        Monster monster = actor.GetComponent<Monster>();
+    public override BaseState FixedUpdate(ActorBase actor) {
+        Monster monster = (Monster) actor;
         bool x = monster.ExecuteCommand<MoveCommand>();
 
         bool exist_jump = monster.ExecuteCommand<JumpCommand>();
@@ -105,9 +106,9 @@ public class MonsterOnLandState : MonsterState
 
 public class MonsterInAirState : MonsterState
 {
-    public override BaseState FixedUpdate(GameObject actor)
+    public override BaseState FixedUpdate(ActorBase actor)
     {
-        Monster monster = actor.GetComponent<Monster>();
+        Monster monster = (Monster) actor;
         monster.ExecuteCommand<MoveCommand>();
 
         if (monster.IsOnGround()) { return new MonsterOnLandState(); }
