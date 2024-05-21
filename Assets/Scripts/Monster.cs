@@ -8,14 +8,12 @@ public class Monster : ActorBase
 {
     public float frontWallDetectRayLength = 0.1f;
     public float playerDetectTime = 3f;
-    public float tracePlayerTurnAroundDelay = 0.8f;
     public Detector detector;
     private Strategy.MonsterAI _strategy;
     private CapsuleCollider2D _capsuleCollider;
     private Vector2 _capsuleSize;
     private GameObject _player;
     private float _playerDetectTimer;
-    private float _lastTracePlayerTurnAroundTime;
     protected bool _frontWall;
     protected bool _moveToRight = true;
 
@@ -87,15 +85,5 @@ public class Monster : ActorBase
         scale.x *= -1f;
         transform.localScale = scale;
         _moveToRight = !_moveToRight;
-    }
-
-    public bool CanTurnAroundToTrackPlayer()
-    {
-        return Time.time - _lastTracePlayerTurnAroundTime > tracePlayerTurnAroundDelay;
-    }
-    
-    public void UpdateLastTurnAroundTime()
-    {
-        _lastTracePlayerTurnAroundTime = Time.time;
     }
 }
