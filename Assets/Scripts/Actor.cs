@@ -91,13 +91,14 @@ public abstract class ActorBase : MonoBehaviour {
         return hit ? hit : null; // check hit.collider is empty or not
     }
 
-    protected virtual void FlipObject()
+    public virtual void FlipObject()
     {
         Vector3 scale = transform.localScale;
         scale.x *= -1f;
         transform.localScale = scale;
     }
 
+    public virtual Vector2 ObjectFaceDirection() { return transform.localScale.x > 0.0f ? Vector2.right : Vector2.left; }
     protected virtual BaseState InitialState() { return null; }
     protected virtual void PreparationBeforeFixedUpdate() { CollectState(); }
     public virtual void SetFriction(FrictionType friction_type) {}
