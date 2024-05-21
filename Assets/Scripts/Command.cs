@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Actor;
 using State;
 using TMPro.EditorUtilities;
 using UnityEngine;
