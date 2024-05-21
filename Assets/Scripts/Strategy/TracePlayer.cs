@@ -26,7 +26,10 @@ public class TracePlayer : KeepMove
             monster.GetPlayer().transform.position - monster.transform.position;
         if ((monster.GetMoveToRight() && monster_to_player.x < 0f) ||
             (!monster.GetMoveToRight() && monster_to_player.x > 0f)) {
-            monster.TurnAround();
+            if (monster.CanTurnAroundToTrackPlayer()) {
+                monster.TurnAround();
+                monster.UpdateLastTurnAroundTime();
+            }
         }
         if (monster.IsFrontWall()) { monster.ReceiveCommands(new JumpCommand()); }
         monster.ReceiveCommands(new MonsterMoveCommand(speedUpWhenTracing));
