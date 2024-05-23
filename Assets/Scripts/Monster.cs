@@ -7,6 +7,7 @@ using State;
 public class Monster : ActorBase
 {
     public float frontWallDetectRayLength = 0.1f;
+    public Detector detector;
     private Strategy.MonsterAI _strategy;
     private CapsuleCollider2D _capsuleCollider;
     private Vector2 _capsuleSize;
@@ -27,6 +28,10 @@ public class Monster : ActorBase
     {
         CollectState();
         if (_strategy != null) { _strategy.Decide(this); }
+    }
+    
+    public GameObject GetDetectedPlayer() {
+        return detector.GetDetectedObject();
     }
 
     protected override void CollectState()

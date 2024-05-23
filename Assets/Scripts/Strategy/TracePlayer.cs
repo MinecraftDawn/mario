@@ -11,14 +11,13 @@ public class TracePlayer : KeepMove
     public float speedUpWhenTracing = 1.5f;
     public float playerDetectTime = 3f;
     public float tracePlayerTurnAroundDelay = 0.8f;
-    public Detector playerDetector;
     private GameObject _player;
     private float _lastPlayerDetectTime;
     private float _lastTracePlayerTurnAroundTime;
 
     public override void Decide(Monster monster)
     {
-        UpdatePlayerDetection();
+        UpdatePlayerDetection(monster);
         if (IsPlayerDetected()) {
             Tracing(monster);
         }
@@ -27,13 +26,15 @@ public class TracePlayer : KeepMove
         }
     }
     
-    private void UpdatePlayerDetection() {
-        if (playerDetector.IsDetected()) {
-            _player = playerDetector.GetDetectedObject();
+    private void UpdatePlayerDetection(Monster monster) {
+        GameObject? player = monster.GetDetectedPlayer();
+        if (player is not null) {
+            _player = player;
             UpdateLastDetectPlayerTime();
         }
-
-        if (IsForgetPlayer()) { _player = null; }
+        else if(IsForgetPlayer()) {
+            _player = null;
+        }
     }
     
     private bool IsPlayerDetected()
