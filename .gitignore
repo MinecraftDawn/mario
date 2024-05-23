@@ -130,3 +130,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Visual studio
+.vsconfig
