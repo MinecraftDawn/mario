@@ -41,7 +41,7 @@ public abstract class ActorBase : MonoBehaviour {
     // Update is called once per frame
     public virtual void Update()
     {
-        _state = _state.Update(gameObject);
+        _state = _state.Update(this);
     }
 
     public virtual void FixedUpdate()
@@ -53,8 +53,8 @@ public abstract class ActorBase : MonoBehaviour {
     private void StateFixedUpdate()
     {
         BaseState oldState = _state;
-        _state = _state.FixedUpdate(gameObject);
-        if (!ReferenceEquals(oldState, _state)) { _state.OnStateStart(gameObject); }
+        _state = _state.FixedUpdate(this);
+        if (!ReferenceEquals(oldState, _state)) { _state.OnStateStart(this); }
         CleanCommandList();
     }
 
@@ -106,6 +106,7 @@ public abstract class ActorBase : MonoBehaviour {
         get { return _rigidbody.velocity; }
         set { _rigidbody.velocity = value; }
     }
+    public Rigidbody2D GetRigidbody() { return _rigidbody; }
     public bool IsOnGround() { return _onGround; }
     public bool IsOnSlope() { return _onSlope; }
     public bool IsFalling() { return _isFalling; }
@@ -124,7 +125,7 @@ public abstract class ActorBase : MonoBehaviour {
         BaseCommand? command = _commandSet.FirstOrDefault(x => x is Command);
         if (command is null) { return false; }
         
-        command.Execute(gameObject);
+        command.Execute(this);
         return true;
     }
 }
