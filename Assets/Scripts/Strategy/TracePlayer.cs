@@ -32,9 +32,7 @@ public class TracePlayer : KeepMove
             _player = player;
             UpdateLastDetectPlayerTime();
         }
-        else if(IsForgetPlayer()) {
-            _player = null;
-        }
+        else if(IsForgetPlayer()) { _player = null; }
     }
     
     private bool IsPlayerDetected()
