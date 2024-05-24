@@ -31,7 +31,7 @@ public class Monster : ActorBase
     }
     
     public GameObject GetDetectedPlayer() {
-        return detector.GetDetectedObject();
+        return detector?.GetDetectedObject();
     }
 
     protected override void CollectState()
