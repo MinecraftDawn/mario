@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Actor;
 using State;
 using TMPro.EditorUtilities;
 using UnityEngine;
@@ -35,6 +36,8 @@ public class MoveCommand : BaseCommand
             velocity.x = actor.horizontalSpeed * _horizontal;
         }
         actor.velocity = velocity;
+        Vector2 command_direction = _horizontal > 0.0f ? Vector2.right : Vector2.left;
+        if (actor.ObjectFaceDirection() != command_direction) { actor.FlipObject(); }
     }
 }
 

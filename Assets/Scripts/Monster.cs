@@ -81,9 +81,7 @@ public class Monster : ActorBase
     public GameObject GetPlayer() { return _player; }
     public void TurnAround()
     {
-        Vector3 scale = transform.localScale;
-        scale.x *= -1f;
-        transform.localScale = scale;
+        FlipObject();
         _moveToRight = !_moveToRight;
     }
 }
