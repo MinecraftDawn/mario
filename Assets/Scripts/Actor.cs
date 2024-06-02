@@ -60,17 +60,9 @@ public abstract class ActorBase : MonoBehaviour {
 
     protected virtual void CollectState()
     {
-        _onGround = DetectGround() != null;
-        _onSlope = false;
+        DetectGround();
+        DetectSlope();
         _isFalling = IsStateType<InAirState>() && _rigidbody.velocity.y < 0f;
-        RaycastHit2D? result = DetectSlope();
-        if (result != null) {
-            RaycastHit2D slope_hit = result.Value;
-            _groundDirection = -Vector2.Perpendicular(slope_hit.normal).normalized;
-            Debug.DrawRay(slope_hit.point, slope_hit.normal, Color.green);
-            Debug.DrawRay(slope_hit.point, _groundDirection, Color.red);
-            if (Mathf.Abs(slope_hit.normal.x) > 1e-4f) { _onSlope = true; }
-        }
     }
 
     protected virtual RaycastHit2D? DetectGround() 
@@ -80,14 +72,23 @@ public abstract class ActorBase : MonoBehaviour {
         center += groundCastCenterOffset;
         RaycastHit2D hit = Physics2D.BoxCast(center, 
             groundCastBoxSize, 0, -Vector2.up, groundCastDist, ground_mask);
+        _onGround = hit;
         return hit ? hit : null; // check hit.collider is empty or not
     }
 
     protected virtual RaycastHit2D? DetectSlope() 
     {
         LayerMask ground_mask = LayerMask.GetMask("Ground");
+        _onSlope = false;
         // TODO: now is hard coded, try to extract the parameter to unity property
         RaycastHit2D hit = Physics2D.Raycast(transform.position + new Vector3(0, 0.5f, 0), -Vector2.up, 1.0f, ground_mask);
+        if (hit) {
+            _groundDirection = -Vector2.Perpendicular(hit.normal).normalized;
+            Debug.DrawRay(hit.point, hit.normal, Color.green);
+            Debug.DrawRay(hit.point, _groundDirection, Color.red);
+            if (Mathf.Abs(hit.normal.x) > 1e-4f) { _onSlope = true; }
+        }
+
         return hit ? hit : null; // check hit.collider is empty or not
     }
 
