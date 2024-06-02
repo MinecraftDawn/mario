@@ -73,6 +73,11 @@ public abstract class ActorBase : MonoBehaviour {
         RaycastHit2D hit = Physics2D.BoxCast(center, 
             groundCastBoxSize, 0, -Vector2.up, groundCastDist, ground_mask);
         _onGround = hit;
+        if (hit) {
+            _groundDirection = -Vector2.Perpendicular(hit.normal).normalized;
+            Debug.DrawRay(hit.point, hit.normal, Color.green);
+            Debug.DrawRay(hit.point, _groundDirection, Color.red);
+        }
         return hit ? hit : null; // check hit.collider is empty or not
     }
 
@@ -82,13 +87,7 @@ public abstract class ActorBase : MonoBehaviour {
         _onSlope = false;
         // TODO: now is hard coded, try to extract the parameter to unity property
         RaycastHit2D hit = Physics2D.Raycast(transform.position + new Vector3(0, 0.5f, 0), -Vector2.up, 1.0f, ground_mask);
-        if (hit) {
-            _groundDirection = -Vector2.Perpendicular(hit.normal).normalized;
-            Debug.DrawRay(hit.point, hit.normal, Color.green);
-            Debug.DrawRay(hit.point, _groundDirection, Color.red);
-            if (Mathf.Abs(hit.normal.x) > 1e-4f) { _onSlope = true; }
-        }
-
+        _onSlope = hit && Mathf.Abs(hit.normal.x) > 1e-4f;
         return hit ? hit : null; // check hit.collider is empty or not
     }
 
