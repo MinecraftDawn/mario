@@ -15,6 +15,7 @@ public class Player : ActorBase
     private Vector2 _capsuleSize;
     public PhysicsMaterial2D fullFriction;
     public PhysicsMaterial2D noFriction;
+    public int health = 3;
 
     // Start is called before the first frame update
     public override void Start()
