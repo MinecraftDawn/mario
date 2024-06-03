@@ -39,8 +39,9 @@ public class Player : ActorBase
     void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "MonsterBody") {
-            Debug.Log("player is hitten by monster!");
+            health -= 1;
         }
+        if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
     }
 
     void OnTriggerEnter2D(Collider2D col)
