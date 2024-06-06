@@ -15,8 +15,6 @@ public class TracePlayer : KeepMove
     [SerializeField]
     public DelayTimer tracePlayerTurnAroundTimer = new DelayTimer(0.8f);
     private GameObject _player;
-    private float _lastPlayerDetectTime;
-    private float _lastTracePlayerTurnAroundTime;
 
     public override void Decide(Monster monster)
     {
