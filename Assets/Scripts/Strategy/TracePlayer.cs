@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Command;
 
+#nullable enable
+
 namespace Strategy
 {
 
@@ -11,7 +13,7 @@ public class TracePlayer : KeepMove
     public float speedUpWhenTracing = 1.5f;
     public float playerDetectTime = 3f;
     public float tracePlayerTurnAroundDelay = 0.8f;
-    private GameObject _player;
+    private GameObject? _player;
     private float _lastPlayerDetectTime;
     private float _lastTracePlayerTurnAroundTime;
 
@@ -26,6 +28,7 @@ public class TracePlayer : KeepMove
         }
     }
     
+    #nullable enable
     private void UpdatePlayerDetection(Monster monster) {
         GameObject? player = monster.GetDetectedPlayer();
         if (player is not null) {
@@ -40,8 +43,9 @@ public class TracePlayer : KeepMove
         return _player != null;
     }
 
-    private void Tracing(Monster monster)
-    {
+    private void Tracing(Monster monster) {
+        if (_player is null) return;
+        
         Vector2 monster_to_player = 
             _player.transform.position - monster.transform.position;
         if ((monster.GetMoveToRight() && monster_to_player.x < 0f) ||
