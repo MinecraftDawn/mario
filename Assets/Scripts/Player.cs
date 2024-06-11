@@ -42,11 +42,6 @@ public class Player : ActorBase
         }
     }
 
-    void OnTriggerEnter2D(Collider2D col)
-    {
-        if (col.gameObject.tag == "Item") { col.GetComponent<ItemBase>().Effect(); }
-    }
-
     public override void SetFriction(FrictionType friction_type)
     {
         if (friction_type == FrictionType.FULL) {
