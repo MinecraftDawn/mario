@@ -11,6 +11,7 @@ class InputHandler : MonoBehaviour
     void Update()
     {
         float horizontal = Input.GetAxis("Horizontal");
+        if (Input.GetKey(KeyCode.Escape)) { Application.Quit(); }
         // TODO: prevent to reallocate the command, this may affect FPS.
         if (horizontal != 0) { player.GetComponent<Player>().ReceiveCommands(new MoveCommand(horizontal)); }
         if (Input.GetKey(KeyCode.UpArrow)) { player.GetComponent<Player>().ReceiveCommands(new JumpCommand()); }
