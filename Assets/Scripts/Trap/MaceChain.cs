@@ -29,6 +29,9 @@ public class MaceChain : MonoBehaviour
         float currentAngle = _chainBody.transform.eulerAngles.z * Mathf.Deg2Rad;
         float angle = _maxAngle * Mathf.Deg2Rad;
         if (currentAngle > angle && currentAngle < 2f * Mathf.PI - angle) { direction *= -1f; }
+        // Non-linear pendulum, the max angle exceed 5 degree, angular velocity will changed.
+        // angular velocity = sqrt(2 * g / L * (cos(max_angle) - cos(current_angle)))
+        // where g is gravity, L is the length from mace to pivot
         _chainBodyRigidbody.angularVelocity =
             Mathf.Sqrt((2 * _gravity) / _length * Mathf.Abs(Mathf.Cos(angle) - Mathf.Cos(currentAngle))) * Mathf.Rad2Deg;
         _chainBodyRigidbody.angularVelocity *= direction;
