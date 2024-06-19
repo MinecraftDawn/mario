@@ -15,6 +15,7 @@ public class Player : ActorBase
     private Vector2 _capsuleSize;
     public PhysicsMaterial2D fullFriction;
     public PhysicsMaterial2D noFriction;
+    public int health = 3;
 
     // Start is called before the first frame update
     public override void Start()
@@ -38,8 +39,9 @@ public class Player : ActorBase
     void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "MonsterBody") {
-            Debug.Log("player is hitten by monster!");
+            health -= 1;
         }
+        if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
     }
 
     public override void SetFriction(FrictionType friction_type)
