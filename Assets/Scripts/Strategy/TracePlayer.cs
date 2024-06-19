@@ -29,7 +29,6 @@ public class TracePlayer : KeepMove
         }
     }
     
-    #nullable enable
     private void UpdatePlayerDetection(Monster monster) {
         GameObject? player = monster.GetDetectedPlayer();
         if (player is not null) {
