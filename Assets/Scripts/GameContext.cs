@@ -6,6 +6,7 @@ using Event;
 public class GameContext : MonoBehaviour
 {
     public static EventQueue eventQueue;
+    public int maxExecuteCount = 5;
 
     [SerializeField]
     private int score;
@@ -17,9 +18,11 @@ public class GameContext : MonoBehaviour
 
     void Update()
     {
-        if (!eventQueue.IsEmpty()) {
+        int count = 0;
+        while (!eventQueue.IsEmpty() && count < maxExecuteCount) {
             EventBase game_event = eventQueue.Dequeue();
             game_event.UpdateContext(this);
+            count++;
         }
     }
 
