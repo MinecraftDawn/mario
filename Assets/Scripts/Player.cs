@@ -44,11 +44,6 @@ public class Player : ActorBase
         if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
     }
 
-    void OnTriggerEnter2D(Collider2D col)
-    {
-        if (col.gameObject.tag == "Item") { col.GetComponent<ItemBase>().Effect(); }
-    }
-
     public override void SetFriction(FrictionType friction_type)
     {
         if (friction_type == FrictionType.FULL) {
