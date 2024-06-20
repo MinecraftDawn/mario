@@ -38,10 +38,7 @@ public class Player : ActorBase
 
     void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.tag == "MonsterBody") {
-            health -= 1;
-        }
-        if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
+        if (other.gameObject.tag == "MonsterBody") { Hurt(); }
     }
 
     public override void SetFriction(FrictionType friction_type)
@@ -54,4 +51,10 @@ public class Player : ActorBase
     }
 
     protected override BaseState InitialState() { return new OnLandState(); }
+
+    public void Hurt()
+    {
+        health -= 1;
+        if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
+    }
 }
