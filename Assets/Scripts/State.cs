@@ -67,18 +67,7 @@ public class InAirState : MovableState{
         base.FixedUpdate(actor);
         Player player = (Player)actor;
 
-        bool jump_exist = player.IsContainCommand<JumpCommand>();
-        player.SetGravityToBase();
-        player.ResetDrag();
-        if (player.IsFalling()) {
-            player.SetGravityToFull();
-        } else if (!jump_exist) {
-            player.SetGravityToHalf();
-        }
-        
-        Vector2 velocity = player.velocity;
-        velocity.y = Mathf.Max(velocity.y, -player.maxFallSpeed);
-        player.velocity = velocity;
+        ModifyFallingStatus(player);
 
         _freezeTick--;
         if (_freezeTick < 0 && player.IsOnGround() && player.IsFalling()) { return new OnLandState(); }
@@ -90,6 +79,24 @@ public class InAirState : MovableState{
     {
         Player player = (Player)actor;
         player.SetFriction(FrictionType.NONE);
+    }
+
+    private void ModifyFallingStatus(Player player)
+    {
+        // check whether player holding jump button
+        bool jump_exist = player.IsContainCommand<JumpCommand>();
+        player.SetGravityToBase();
+        player.ResetDrag();
+        if (player.IsFalling()) {
+            player.SetGravityToFull();
+        } else if (!jump_exist) {
+            // when player release jump button, increase gravity to make it slow down faster.
+            player.SetGravityToHalf();
+        }
+        
+        // clip max y axis velocity
+        player.velocity = new Vector2(
+            player.velocity.x, Mathf.Max(player.velocity.y, -player.maxFallSpeed));
     }
 }
 
