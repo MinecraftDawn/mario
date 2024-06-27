@@ -54,7 +54,7 @@ public class OnLandState : MovableState
         Player player = (Player)actor;
         player.SetFriction(FrictionType.FULL);
         player.NoDrag();
-        player.ResetGravity();
+        player.SetGravityToBase();
     }
 }
 
@@ -66,6 +66,15 @@ public class InAirState : MovableState{
     {
         base.FixedUpdate(actor);
         Player player = (Player)actor;
+
+        bool jump_exist = player.IsContainCommand<JumpCommand>();
+        player.SetGravityToBase();
+        player.ResetDrag();
+        if (player.IsFalling()) {
+            player.SetGravityToFull();
+        } else if (!jump_exist) {
+            player.SetGravityToHalf();
+        }
         
         Vector2 velocity = player.velocity;
         velocity.y = Mathf.Max(velocity.y, -player.maxFallSpeed);
@@ -80,10 +89,8 @@ public class InAirState : MovableState{
     public override void OnStateStart(ActorBase actor)
     {
         Player player = (Player)actor;
-        actor.SetFriction(FrictionType.NONE);
+        player.SetFriction(FrictionType.NONE);
     }
-
-    private bool isFalling(Rigidbody2D rigidbody) { return rigidbody.velocity.y < 0.0f; }
 }
 
 public class MonsterState : BaseState

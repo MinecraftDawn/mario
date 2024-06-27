@@ -60,8 +60,9 @@ public class Player : ActorBase
     }
 
     public void NoDrag() { _rigidbody.drag = 0; }
+    public void ResetDrag() { _rigidbody.drag = _linearDrag; }
     public void NoGravity() { _rigidbody.gravityScale = 0; }
-    public void ResetGravity() { _rigidbody.gravityScale = _gravity * _fallMultiplier; }
+    public void SetGravityToFull() { _rigidbody.gravityScale = _gravity * _fallMultiplier; }
     public void SetGravityToBase() { _rigidbody.gravityScale = _gravity; }
     public void SetGravityToHalf() { _rigidbody.gravityScale = _gravity * (_fallMultiplier / 2); }
 
