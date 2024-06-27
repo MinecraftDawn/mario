@@ -51,8 +51,10 @@ public class OnLandState : MovableState
     }
 
     public override void OnStateStart(ActorBase actor) {
-        Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
-        agent.SetFriction(FrictionType.FULL);
+        Player player = (Player)actor;
+        player.SetFriction(FrictionType.FULL);
+        player.NoDrag();
+        player.ResetGravity();
     }
 }
 
@@ -63,22 +65,22 @@ public class InAirState : MovableState{
     public override BaseState FixedUpdate(ActorBase actor)
     {
         base.FixedUpdate(actor);
-        Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
+        Player player = (Player)actor;
         
-        Vector2 velocity = agent.velocity;
-        velocity.y = Mathf.Max(velocity.y, -agent.maxFallSpeed);
-        agent.velocity = velocity;
+        Vector2 velocity = player.velocity;
+        velocity.y = Mathf.Max(velocity.y, -player.maxFallSpeed);
+        player.velocity = velocity;
 
         _freezeTick--;
-        if (_freezeTick < 0 && agent.IsOnGround() && agent.IsFalling()) { return new OnLandState(); }
+        if (_freezeTick < 0 && player.IsOnGround() && player.IsFalling()) { return new OnLandState(); }
         
         return this;
     }
 
     public override void OnStateStart(ActorBase actor)
     {
-        Actor.ActorBase agent = actor.GetComponent<Actor.ActorBase>();
-        agent.SetFriction(FrictionType.NONE);
+        Player player = (Player)actor;
+        actor.SetFriction(FrictionType.NONE);
     }
 
     private bool isFalling(Rigidbody2D rigidbody) { return rigidbody.velocity.y < 0.0f; }
