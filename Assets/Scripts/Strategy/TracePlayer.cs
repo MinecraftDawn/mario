@@ -4,6 +4,8 @@ using UnityEngine;
 using Command;
 using utils;
 
+#nullable enable
+
 namespace Strategy
 {
 
@@ -14,7 +16,7 @@ public class TracePlayer : KeepMove
     public DelayTimer playerDetectTimer = new DelayTimer(3f);
     [SerializeField]
     public DelayTimer tracePlayerTurnAroundTimer = new DelayTimer(0.8f);
-    private GameObject _player;
+    private GameObject? _player;
 
     public override void Decide(Monster monster)
     {
@@ -41,8 +43,9 @@ public class TracePlayer : KeepMove
         return _player != null;
     }
 
-    private void Tracing(Monster monster)
-    {
+    private void Tracing(Monster monster) {
+        if (_player is null) return;
+        
         Vector2 monster_to_player = 
             _player.transform.position - monster.transform.position;
         if ((monster.GetMoveToRight() && monster_to_player.x < 0f) ||

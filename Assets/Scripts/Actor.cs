@@ -121,6 +121,7 @@ public abstract class ActorBase : MonoBehaviour {
     public virtual IEnumerable<BaseCommand> GetCommandListEnumable() { return _commandSet; }
     public virtual void ReceiveCommands(BaseCommand command) { _commandSet.Add(command); }
 
+    #nullable enable
     public virtual bool ExecuteCommand<Command>() {
         BaseCommand? command = _commandSet.FirstOrDefault(x => x is Command);
         if (command is null) { return false; }
@@ -128,5 +129,6 @@ public abstract class ActorBase : MonoBehaviour {
         command.Execute(this);
         return true;
     }
+    #nullable disable
 }
 }
