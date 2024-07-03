@@ -83,14 +83,15 @@ public class InAirState : MovableState{
 
     private void ModifyFallingStatus(Player player)
     {
-        // check whether player holding jump button
-        bool jump_exist = player.IsContainCommand<JumpCommand>();
-        player.SetGravityToBase();
         player.ResetDrag();
         if (player.IsFalling()) {
             player.SetGravityToFull();
-        } else if (!jump_exist) {
-            // when player release jump button, increase gravity to make it slow down faster.
+        } else if (player.ExecuteCommand<HoldingJumpCommand>()) {
+            Debug.Log("holding jump");
+            // if player holding jump button, let it jump higher
+            player.SetGravityToBase();
+        } else {
+            // if player release jump button early, force it slow down.
             player.SetGravityToHalf();
         }
         

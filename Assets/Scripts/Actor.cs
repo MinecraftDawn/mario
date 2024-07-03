@@ -121,8 +121,9 @@ public abstract class ActorBase : MonoBehaviour {
     public Vector2 GetGroundDirection() { return _groundDirection; }
 
     public virtual bool IsContainCommand<Command>() { return _commandSet.Any(x => x is Command); }
+    public virtual bool IsContainCommandInLastCycle<Command>() { return _commandHistoryInLastCycle.Any(x => x is Command); }
     public virtual int GetCommandListSize() { return _commandSet.Count; }
-    public virtual void CleanCommandList() {_commandSet.Clear(); }
+    public virtual void CleanCommandList() { _commandSet.Clear(); }
     public virtual IEnumerable<BaseCommand> GetCommandListEnumable() { return _commandSet; }
     public virtual void ReceiveCommands(BaseCommand command) { _commandSet.Add(command); }
 

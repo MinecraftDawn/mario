@@ -11,12 +11,20 @@ class InputHandler : MonoBehaviour
     void Update()
     {
         float horizontal = Input.GetAxis("Horizontal");
+        Player player_component = player.GetComponent<Player>();
         if (Input.GetKey(KeyCode.Escape)) { Application.Quit(); }
         // TODO: prevent to reallocate the command, this may affect FPS.
-        if (horizontal != 0) { player.GetComponent<Player>().ReceiveCommands(new MoveCommand(horizontal)); }
-        if (Input.GetKey(KeyCode.UpArrow)) { player.GetComponent<Player>().ReceiveCommands(new JumpCommand()); }
+        if (horizontal != 0) { player_component.ReceiveCommands(new MoveCommand(horizontal)); }
+        if (Input.GetKey(KeyCode.UpArrow)) {
+            if (player_component.IsContainCommand<JumpCommand>()
+                || player_component.IsContainCommand<HoldingJumpCommand>()) {
+                player_component.ReceiveCommands(new HoldingJumpCommand());
+            } else {
+                player_component.ReceiveCommands(new JumpCommand());
+            }
+        }
         
         // For Test
-        if(Input.GetKeyDown(KeyCode.Space)) { player.GetComponent<Player>().ReceiveCommands(new TestCommand()); }
+        if(Input.GetKeyDown(KeyCode.Space)) { player_component.ReceiveCommands(new TestCommand()); }
     }
 }
