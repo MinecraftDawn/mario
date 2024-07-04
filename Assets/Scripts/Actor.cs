@@ -10,6 +10,8 @@ using UnityEngine;
 namespace Actor {
 public abstract class ActorBase : MonoBehaviour {
     protected BaseState _state;
+    protected HashSet<BaseCommand> _commandHistoryInLastCycle;
+    protected HashSet<BaseCommand> _commandHistoryInCurrentCycle;
     protected HashSet<BaseCommand> _commandSet;
     protected Rigidbody2D _rigidbody;
     protected bool _onGround;
@@ -35,6 +37,8 @@ public abstract class ActorBase : MonoBehaviour {
     {
         _state = InitialState();
         _commandSet = new HashSet<BaseCommand>();
+        _commandHistoryInCurrentCycle = new HashSet<BaseCommand>();
+        _commandHistoryInLastCycle = new HashSet<BaseCommand>();
         _rigidbody = GetComponent<Rigidbody2D>();
     }
 
@@ -56,6 +60,7 @@ public abstract class ActorBase : MonoBehaviour {
         _state = _state.FixedUpdate(this);
         if (!ReferenceEquals(oldState, _state)) { _state.OnStateStart(this); }
         CleanCommandList();
+        UpdateCommandHistory();
     }
 
     protected virtual void CollectState()
@@ -116,6 +121,7 @@ public abstract class ActorBase : MonoBehaviour {
     public Vector2 GetGroundDirection() { return _groundDirection; }
 
     public virtual bool IsContainCommand<Command>() { return _commandSet.Any(x => x is Command); }
+    public virtual bool IsContainCommandInLastCycle<Command>() { return _commandHistoryInLastCycle.Any(x => x is Command); }
     public virtual int GetCommandListSize() { return _commandSet.Count; }
     public virtual void CleanCommandList() { _commandSet.Clear(); }
     public virtual IEnumerable<BaseCommand> GetCommandListEnumable() { return _commandSet; }
@@ -126,7 +132,17 @@ public abstract class ActorBase : MonoBehaviour {
         if (command is null) { return false; }
         
         command.Execute(this);
+        _commandHistoryInCurrentCycle.Add(command);
         return true;
+    }
+
+    protected virtual void UpdateCommandHistory()
+    {
+        _commandHistoryInLastCycle.Clear();
+        foreach(BaseCommand executed_command in _commandHistoryInCurrentCycle) {
+            _commandHistoryInLastCycle.Add(executed_command);
+        }
+        _commandHistoryInCurrentCycle.Clear();
     }
 }
 }

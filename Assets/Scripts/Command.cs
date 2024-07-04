@@ -51,6 +51,13 @@ public class JumpCommand : BaseCommand
     }
 }
 
+public class HoldingJumpCommand : JumpCommand
+{
+    // Leave execute empty, make this command to be no effect.
+    // Used to tracing the button is holding or not.
+    public override void Execute(ActorBase actor) {}
+}
+
 public class TestCommand : BaseCommand {
     public override void Execute(Actor.ActorBase actor)
     {

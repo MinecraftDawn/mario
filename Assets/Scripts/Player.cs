@@ -11,6 +11,12 @@ using UnityEngine.UI;
 public class Player : ActorBase
 {
 
+    [SerializeField]
+    private float _gravity = 1f;
+    [SerializeField]
+    private float _linearDrag = 4f;
+    [SerializeField]
+    private float _fallMultiplier = 3f;
     private CapsuleCollider2D _capsuleCollider;
     private Vector2 _capsuleSize;
     public PhysicsMaterial2D fullFriction;
@@ -52,6 +58,13 @@ public class Player : ActorBase
             _capsuleCollider.sharedMaterial = noFriction;
         }
     }
+
+    public void NoDrag() { _rigidbody.drag = 0; }
+    public void ResetDrag() { _rigidbody.drag = _linearDrag; }
+    public void NoGravity() { _rigidbody.gravityScale = 0; }
+    public void SetGravityToFull() { _rigidbody.gravityScale = _gravity * _fallMultiplier; }
+    public void SetGravityToBase() { _rigidbody.gravityScale = _gravity; }
+    public void SetGravityToHalf() { _rigidbody.gravityScale = _gravity * (_fallMultiplier / 2); }
 
     protected override BaseState InitialState() { return new OnLandState(); }
 }
