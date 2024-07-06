@@ -5,8 +5,6 @@ using System.Linq;
 using Actor;
 using Command;
 using enums;
-using Unity.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace State {
@@ -22,7 +20,14 @@ public class MovableState : BaseState
     public virtual BaseState Update(ActorBase actor) { return this; }
     public virtual BaseState FixedUpdate(ActorBase actor) {
         Player player = (Player) actor;
-        player.ExecuteCommand<MoveCommand>();
+        // player.ExecuteCommand<MoveCommand>();
+        if (player.IsContainCommand<SmoothMoveCommand>()) {
+            player.ExecuteCommand<SmoothMoveCommand>();
+        } else {
+            float current_speed = player.GetMoveSpeed();
+            float speed_diff = -current_speed;
+            player.AddForce(speed_diff * player.GetDecelerate());
+        }
         return this;
     }
 
@@ -38,7 +43,7 @@ public class OnLandState : MovableState
         if (player.IsContainCommand<MoveCommand>()) {
             player.SetFriction(FrictionType.NONE);
         } else {
-            player.SetFriction(FrictionType.FULL);
+            // player.SetFriction(FrictionType.FULL);
         }
         base.FixedUpdate(actor);
 
@@ -52,9 +57,10 @@ public class OnLandState : MovableState
 
     public override void OnStateStart(ActorBase actor) {
         Player player = (Player)actor;
-        player.SetFriction(FrictionType.FULL);
+        // player.SetFriction(FrictionType.FULL);
         player.NoDrag();
-        player.SetGravityToBase();
+        // player.SetGravityToBase();
+        player.SetGravityToZero();
     }
 }
 
@@ -79,6 +85,7 @@ public class InAirState : MovableState{
     {
         Player player = (Player)actor;
         player.SetFriction(FrictionType.NONE);
+        player.SetGravityToBase();
     }
 
     private void ModifyFallingStatus(Player player)
