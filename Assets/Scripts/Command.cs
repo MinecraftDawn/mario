@@ -56,6 +56,8 @@ public class SmoothMoveCommand : MoveCommand
         float speed_diff = target_speed - current_speed;
         float movement = speed_diff * accelerate;
         player.AddForce(movement);
+        Vector2 player_direction = player.velocity.x > 0.0f ? Vector2.right : Vector2.left;
+        if (player.ObjectFaceDirection() != player_direction) { player.FlipObject(); }
     }
 }
 

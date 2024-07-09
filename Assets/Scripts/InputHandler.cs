@@ -15,7 +15,7 @@ class InputHandler : MonoBehaviour
         if (Input.GetKey(KeyCode.Escape)) { Application.Quit(); }
         // TODO: prevent to reallocate the command, this may affect FPS.
         // if (horizontal != 0) { player_component.ReceiveCommands(new MoveCommand(horizontal)); }
-        if (horizontal != 0) { player_component.ReceiveCommands(new MoveCommand(horizontal)); }
+        if (horizontal != 0) { player_component.ReceiveCommands(new SmoothMoveCommand(horizontal)); }
         if (Input.GetKey(KeyCode.UpArrow)) {
             if (player_component.IsContainCommand<JumpCommand>()
                 || player_component.IsContainCommand<HoldingJumpCommand>()) {
