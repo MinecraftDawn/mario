@@ -26,7 +26,6 @@ public class Player : ActorBase
     [SerializeField]
     private float _decelerate = 3f;
     private CapsuleCollider2D _capsuleCollider;
-    private Vector2 _capsuleSize;
     public PhysicsMaterial2D fullFriction;
     public PhysicsMaterial2D noFriction;
     public int health = 3;
@@ -36,7 +35,6 @@ public class Player : ActorBase
     {
         base.Start();
         _capsuleCollider = GetComponent<CapsuleCollider2D>();
-        _capsuleSize = _capsuleCollider.size;
     }
 
     // Update is called once per frame
