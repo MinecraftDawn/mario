@@ -52,10 +52,13 @@ public class SmoothMoveCommand : MoveCommand
         float lerp = actor.IsStateType<OnLandState>() ? 1.0f : 0.5f;
         target_speed = Mathf.Lerp(current_speed, target_speed, lerp);
 
+        // speed_diff have the direction of the force,
+        // compute the force value by speed_diff * accelerate,
+        // this method does not have any theory, it is an empirical method.
         float accelerate = player.GetAccelerate();
         float speed_diff = target_speed - current_speed;
         float movement = speed_diff * accelerate;
-        player.AddForce(movement);
+        player.AddMovementForce(movement);
         Vector2 player_direction = player.velocity.x > 0.0f ? Vector2.right : Vector2.left;
         if (player.ObjectFaceDirection() != player_direction) { player.FlipObject(); }
     }

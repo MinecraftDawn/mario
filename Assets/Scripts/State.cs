@@ -26,7 +26,7 @@ public class MovableState : BaseState
         } else {
             float current_speed = player.GetMoveSpeed();
             float speed_diff = -current_speed;
-            player.AddForce(speed_diff * player.GetDecelerate());
+            player.AddMovementForce(speed_diff * player.GetDecelerate());
         }
         return this;
     }
@@ -40,11 +40,13 @@ public class OnLandState : MovableState
     {
         // TODO: change to use parent class Actor.ActorBase
         Player player = (Player) actor;
-        if (player.IsContainCommand<MoveCommand>()) {
-            player.SetFriction(FrictionType.NONE);
+        if (!player.IsContainCommand<MoveCommand>() && player.IsOnSlope()) {
+            // prevent player slide fown from slope
+            player.SetGravityToZero();
         } else {
-            // player.SetFriction(FrictionType.FULL);
+            player.SetGravityToBase();
         }
+
         base.FixedUpdate(actor);
 
         player.ExecuteCommand<TestCommand>(); // Just for test getKeyDown / Up
@@ -57,10 +59,9 @@ public class OnLandState : MovableState
 
     public override void OnStateStart(ActorBase actor) {
         Player player = (Player)actor;
-        // player.SetFriction(FrictionType.FULL);
+        player.SetFriction(FrictionType.NONE);
         player.NoDrag();
-        // player.SetGravityToBase();
-        player.SetGravityToZero();
+        player.SetGravityToBase();
     }
 }
 

@@ -67,11 +67,11 @@ public class Player : ActorBase
         }
     }
 
-    public void AddForce(float force)
+    public void AddMovementForce(float force)
     {
         // formula: f = ma, a = f / m
         _moveSpeed = _moveSpeed + Time.deltaTime * (force / _rigidbody.mass);
-        if (IsStateType<OnLandState>()) {
+        if (IsStateType<OnLandState>() && IsOnSlope()) {
             velocity = _moveSpeed * GetGroundDirection();
         } else {
             velocity = new Vector2(_moveSpeed, velocity.y);
