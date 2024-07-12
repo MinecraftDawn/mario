@@ -17,10 +17,10 @@ class InputHandler : MonoBehaviour
         // if (horizontal != 0) { player_component.ReceiveCommands(new MoveCommand(horizontal)); }
         if (horizontal != 0) { player_component.ReceiveCommands(new SmoothMoveCommand(horizontal)); }
         if (Input.GetKey(KeyCode.UpArrow)) {
-            if (player_component.IsContainCommand<JumpCommand>()
-                || player_component.IsContainCommand<HoldingJumpCommand>()) {
+            if (player_component.IsContainCommandInLastCycle<JumpCommand>()
+                || player_component.IsContainCommandInLastCycle<HoldingJumpCommand>()) {
                 player_component.ReceiveCommands(new HoldingJumpCommand());
-            } else {
+            } else if (Input.GetKeyDown(KeyCode.UpArrow)) {
                 player_component.ReceiveCommands(new JumpCommand());
             }
         }

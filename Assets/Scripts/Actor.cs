@@ -17,6 +17,7 @@ public abstract class ActorBase : MonoBehaviour {
     protected bool _onGround;
     protected bool _onSlope;
     protected bool _isFalling;
+    protected LayerMask _groundMask;
     protected Vector2 _groundDirection;
     public float horizontalSpeed = 3f;
     public float jumpForce = 3f;
@@ -40,6 +41,7 @@ public abstract class ActorBase : MonoBehaviour {
         _commandHistoryInCurrentCycle = new HashSet<BaseCommand>();
         _commandHistoryInLastCycle = new HashSet<BaseCommand>();
         _rigidbody = GetComponent<Rigidbody2D>();
+        _groundMask = LayerMask.GetMask("Ground");
     }
 
     // Update is called once per frame
@@ -67,16 +69,15 @@ public abstract class ActorBase : MonoBehaviour {
     {
         DetectGround();
         DetectSlope();
-        _isFalling = IsStateType<InAirState>() && _rigidbody.velocity.y < 0f;
+        _isFalling = IsStateType<InAirState>() && _rigidbody.velocity.y <= 0f;
     }
 
     protected virtual RaycastHit2D? DetectGround() 
     {
-        LayerMask ground_mask = LayerMask.GetMask("Ground");
         Vector2 center = transform.position;
         center += groundCastCenterOffset;
         RaycastHit2D hit = Physics2D.BoxCast(center, 
-            groundCastBoxSize, 0, -Vector2.up, groundCastDist, ground_mask);
+            groundCastBoxSize, 0, -Vector2.up, groundCastDist, _groundMask);
         _onGround = hit;
         if (hit) {
             _groundDirection = -Vector2.Perpendicular(hit.normal).normalized;
@@ -88,10 +89,9 @@ public abstract class ActorBase : MonoBehaviour {
 
     protected virtual RaycastHit2D? DetectSlope() 
     {
-        LayerMask ground_mask = LayerMask.GetMask("Ground");
         _onSlope = false;
         // TODO: now is hard coded, try to extract the parameter to unity property
-        RaycastHit2D hit = Physics2D.Raycast(transform.position + new Vector3(0, 0.5f, 0), -Vector2.up, 1.0f, ground_mask);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position + new Vector3(0, 0.5f, 0), -Vector2.up, 1.0f, _groundMask);
         _onSlope = hit && Mathf.Abs(hit.normal.x) > 1e-4f;
         return hit ? hit : null; // check hit.collider is empty or not
     }

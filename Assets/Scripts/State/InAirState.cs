@@ -8,16 +8,18 @@ namespace State
 public class InAirState : MovableState{
     // Avoid detecting the ground at the moment of jumping and changing the state to OnLandState
     private int _freezeTick = 1;
+    private bool _startFalling = false;
     
     public override BaseState FixedUpdate(ActorBase actor)
     {
-        base.FixedUpdate(actor);
         Player player = (Player)actor;
+        _startFalling = _startFalling || player.IsFalling();
+        base.FixedUpdate(actor);
 
         ModifyFallingStatus(player);
 
         _freezeTick--;
-        if (_freezeTick < 0 && player.IsOnGround() && player.IsFalling()) { return new OnLandState(); }
+        if (_freezeTick < 0 && player.IsOnGround()) { return new OnLandState(); }
         
         return this;
     }
@@ -32,10 +34,9 @@ public class InAirState : MovableState{
     private void ModifyFallingStatus(Player player)
     {
         player.ResetDrag();
-        if (player.IsFalling()) {
+        if (_startFalling) {
             player.SetGravityToFull();
         } else if (player.ExecuteCommand<HoldingJumpCommand>()) {
-            Debug.Log("holding jump");
             // if player holding jump button, let it jump higher
             player.SetGravityToBase();
         } else {
