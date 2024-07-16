@@ -86,6 +86,30 @@ public class Player : ActorBase
     public float GetMoveSpeed() { return _moveSpeed; }
     public float GetAccelerate() { return _accelerate; }
     public float GetDecelerate() { return _decelerate; }
+    public override void ReceiveCommands(BaseCommand command)
+    {
+        if (_commandSet.Contains(command)) {
+            _commandPool.ReturnObject(command);
+            return;
+        }
+        base.ReceiveCommands(command);
+    }
 
     protected override BaseState InitialState() { return new OnLandState(); }
+    protected override void UpdateCommandHistory()
+    {
+        foreach (BaseCommand history_command in _commandHistoryInLastCycle) {
+            _commandPool.ReturnObject(history_command);
+        }
+        base.UpdateCommandHistory();
+    }
+
+    public override void CleanCommandList()
+    {
+        foreach (BaseCommand command in _commandSet) {
+            _commandPool.ReturnObject(command);
+        }
+        base.CleanCommandList();
+    }
+
 }

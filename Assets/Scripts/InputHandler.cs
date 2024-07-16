@@ -15,13 +15,19 @@ class InputHandler : MonoBehaviour
         if (Input.GetKey(KeyCode.Escape)) { Application.Quit(); }
         // TODO: prevent to reallocate the command, this may affect FPS.
         // if (horizontal != 0) { player_component.ReceiveCommands(new MoveCommand(horizontal)); }
-        if (horizontal != 0) { player_component.ReceiveCommands(new SmoothMoveCommand(horizontal)); }
+        if (horizontal != 0) {
+            SmoothMoveCommand command = player_component.GenerateCommand<SmoothMoveCommand>();
+            command.SetHorizontal(horizontal);
+            player_component.ReceiveCommands(command);
+        }
         if (Input.GetKey(KeyCode.UpArrow)) {
             if (player_component.IsContainCommandInLastCycle<JumpCommand>()
                 || player_component.IsContainCommandInLastCycle<HoldingJumpCommand>()) {
-                player_component.ReceiveCommands(new HoldingJumpCommand());
+                HoldingJumpCommand command = player_component.GenerateCommand<HoldingJumpCommand>();
+                player_component.ReceiveCommands(command);
             } else if (Input.GetKeyDown(KeyCode.UpArrow)) {
-                player_component.ReceiveCommands(new JumpCommand());
+                JumpCommand command = player_component.GenerateCommand<JumpCommand>();
+                player_component.ReceiveCommands(command);
             }
         }
         

@@ -19,6 +19,7 @@ public abstract class ActorBase : MonoBehaviour {
     protected bool _isFalling;
     protected LayerMask _groundMask;
     protected Vector2 _groundDirection;
+    protected CommandPool _commandPool;
     public float horizontalSpeed = 3f;
     public float jumpForce = 3f;
     public float maxFallSpeed = 10f;
@@ -42,6 +43,8 @@ public abstract class ActorBase : MonoBehaviour {
         _commandHistoryInLastCycle = new HashSet<BaseCommand>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _groundMask = LayerMask.GetMask("Ground");
+        CommandPool.InitPool();
+        _commandPool = new CommandPool();
     }
 
     // Update is called once per frame
@@ -132,8 +135,15 @@ public abstract class ActorBase : MonoBehaviour {
         if (command is null) { return false; }
         
         command.Execute(this);
+        _commandSet.Remove(command);
         _commandHistoryInCurrentCycle.Add(command);
         return true;
+    }
+
+    public T GenerateCommand<T>() where T : BaseCommand
+    {
+        T command = _commandPool.RequestObject<T>();
+        return command;
     }
 
     protected virtual void UpdateCommandHistory()
