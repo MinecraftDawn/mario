@@ -22,10 +22,10 @@ public abstract class BaseCommand
 
 public class MoveCommand : BaseCommand
 {
-    private float _horizontal = 0.0f;
+    protected float _horizontal = 0.0f;
 
     public MoveCommand() {}
-    public MoveCommand(float horizontal) { _horizontal = horizontal;  }
+    public MoveCommand(float horizontal) { _horizontal = horizontal; }
     public override void Execute(Actor.ActorBase actor)
     {
         Vector2 velocity = actor.velocity;
@@ -37,6 +37,30 @@ public class MoveCommand : BaseCommand
         actor.velocity = velocity;
         Vector2 command_direction = _horizontal > 0.0f ? Vector2.right : Vector2.left;
         if (actor.ObjectFaceDirection() != command_direction) { actor.FlipObject(); }
+    }
+}
+
+public class SmoothMoveCommand : MoveCommand
+{
+    public SmoothMoveCommand() {}
+    public SmoothMoveCommand(float horizontal) : base(horizontal) {}
+    public override void Execute(ActorBase actor)
+    {
+        Player player = (Player)actor;
+        float target_speed = actor.horizontalSpeed * _horizontal;
+        float current_speed = player.GetMoveSpeed();
+        float lerp = actor.IsStateType<OnLandState>() ? 1.0f : 0.5f;
+        target_speed = Mathf.Lerp(current_speed, target_speed, lerp);
+
+        // speed_diff have the direction of the force,
+        // compute the force value by speed_diff * accelerate,
+        // this method does not have any theory, it is an empirical method.
+        float accelerate = player.GetAccelerate();
+        float speed_diff = target_speed - current_speed;
+        float movement = speed_diff * accelerate;
+        player.AddMovementForce(movement);
+        Vector2 player_direction = player.velocity.x > 0.0f ? Vector2.right : Vector2.left;
+        if (player.ObjectFaceDirection() != player_direction) { player.FlipObject(); }
     }
 }
 
