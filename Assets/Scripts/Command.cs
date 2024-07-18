@@ -138,6 +138,7 @@ public class CommandPool
     static private int _poolSize = 20;
     static private Dictionary<string, List<BaseCommand>> _pool;
     static private Dictionary<string, BaseCommand> _validObject;
+    // Sample objects are Flyweight Pattern, use these sample object to be the hash key.
     static private Dictionary<string, BaseCommand> _sampleObject;
 
     static public void Register<T>() where T : BaseCommand, new()
@@ -191,6 +192,11 @@ public class CommandPool
         obj.next = _validObject[obj.GetType().FullName];
         _validObject[obj.GetType().FullName] = obj;
         obj.isUsing = false;
+    }
+
+    public T GetSample<T>() where T : BaseCommand
+    {
+        return (T)_sampleObject[typeof(T).FullName];
     }
 
     // Used to debug memory leak issue

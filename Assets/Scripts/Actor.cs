@@ -123,16 +123,25 @@ public abstract class ActorBase : MonoBehaviour {
     public bool IsStateType<State>() { return _state is State; }
     public Vector2 GetGroundDirection() { return _groundDirection; }
 
-    public virtual bool IsContainCommand<Command>() { return _commandSet.Any(x => x is Command); }
-    public virtual bool IsContainCommandInLastCycle<Command>() { return _commandHistoryInLastCycle.Any(x => x is Command); }
+    public virtual bool IsContainCommand<Command>() where Command : BaseCommand
+    {
+        return _commandSet.Contains(_commandPool.GetSample<Command>());
+    }
+    public virtual bool IsContainCommandInLastCycle<Command>() where Command : BaseCommand
+    {
+        return _commandHistoryInLastCycle.Contains(_commandPool.GetSample<Command>());
+    }
     public virtual int GetCommandListSize() { return _commandSet.Count; }
     public virtual void CleanCommandList() { _commandSet.Clear(); }
     public virtual IEnumerable<BaseCommand> GetCommandListEnumable() { return _commandSet; }
     public virtual void ReceiveCommands(BaseCommand command) { _commandSet.Add(command); }
 
-    public virtual bool ExecuteCommand<Command>() {
-        BaseCommand? command = _commandSet.FirstOrDefault(x => x is Command);
-        if (command is null) { return false; }
+    public virtual bool ExecuteCommand<Command>() where Command : BaseCommand
+    {
+        BaseCommand command;
+        bool search = _commandSet.TryGetValue(_commandPool.GetSample<Command>(), out command);
+        if (!search) { return false; }
+        if (command == null) { return false; }
         
         command.Execute(this);
         _commandSet.Remove(command);
