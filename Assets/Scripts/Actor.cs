@@ -62,6 +62,8 @@ public abstract class ActorBase : MonoBehaviour {
     private void StateFixedUpdate()
     {
         BaseState oldState = _state;
+        _state = _state.StatusCheck(this);
+        if (!ReferenceEquals(oldState, _state)) { _state.OnStateStart(this); }
         _state = _state.FixedUpdate(this);
         if (!ReferenceEquals(oldState, _state)) { _state.OnStateStart(this); }
         CleanCommandList();

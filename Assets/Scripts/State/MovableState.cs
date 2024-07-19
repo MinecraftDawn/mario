@@ -19,6 +19,8 @@ public class MovableState : BaseState
         return this;
     }
 
+    public virtual BaseState StatusCheck(ActorBase actor) { return this; }
+
     public virtual void OnStateStart(ActorBase actor) { }
 }
 

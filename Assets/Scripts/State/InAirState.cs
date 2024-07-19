@@ -15,12 +15,14 @@ public class InAirState : MovableState{
         Player player = (Player)actor;
         _startFalling = _startFalling || player.IsFalling();
         base.FixedUpdate(actor);
-
         ModifyFallingStatus(player);
+        return this;
+    }
 
+    public override BaseState StatusCheck(ActorBase actor)
+    {
         _freezeTick--;
-        if (_freezeTick < 0 && player.IsOnGround()) { return new OnLandState(); }
-        
+        if (_freezeTick < 0 && actor.IsOnGround()) { return new OnLandState(); }
         return this;
     }
 
