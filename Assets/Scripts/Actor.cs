@@ -26,6 +26,7 @@ public abstract class ActorBase : MonoBehaviour {
     public float groundCastDist;  // ground detect cast distance
     public Vector2 groundCastBoxSize;
     public Vector2 groundCastCenterOffset;
+    public Vector2 directionCastBoxSize = new Vector2(0.3f, 0.4f);
 
     private void OnDrawGizmos()
     {
@@ -55,6 +56,7 @@ public abstract class ActorBase : MonoBehaviour {
 
     public virtual void FixedUpdate()
     {
+        // TODO: Consider to call detect function in Update.
         PreparationBeforeFixedUpdate();
         StateFixedUpdate();
     }
@@ -74,6 +76,7 @@ public abstract class ActorBase : MonoBehaviour {
     {
         DetectGround();
         DetectSlope();
+        DetectGroundDirection();
         _isFalling = IsStateType<InAirState>() && _rigidbody.velocity.y <= 0f;
     }
 
@@ -84,12 +87,23 @@ public abstract class ActorBase : MonoBehaviour {
         RaycastHit2D hit = Physics2D.BoxCast(center, 
             groundCastBoxSize, 0, -Vector2.up, groundCastDist, _groundMask);
         _onGround = hit;
+        return hit ? hit : null; // check hit.collider is empty or not
+    }
+
+    protected virtual RaycastHit2D? DetectGroundDirection()
+    {
+        Vector2 center = transform.position;
+        center += groundCastCenterOffset + 
+                  new Vector2(directionCastBoxSize.x / 2, 0f) * Mathf.Sign(velocity.x);
+        RaycastHit2D hit;
+        hit = Physics2D.BoxCast(
+            center, directionCastBoxSize, 0, -Vector2.up, 0.3f, _groundMask);
         if (hit) {
             _groundDirection = -Vector2.Perpendicular(hit.normal).normalized;
             Debug.DrawRay(hit.point, hit.normal, Color.green);
             Debug.DrawRay(hit.point, _groundDirection, Color.red);
         }
-        return hit ? hit : null; // check hit.collider is empty or not
+        return hit ? hit : null;
     }
 
     protected virtual RaycastHit2D? DetectSlope() 
