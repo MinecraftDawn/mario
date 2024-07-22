@@ -149,7 +149,7 @@ public abstract class ActorBase : MonoBehaviour {
     }
     public virtual int GetCommandListSize() { return _commandSet.Count; }
     public virtual void CleanCommandList() { _commandSet.Clear(); }
-    public virtual IEnumerable<BaseCommand> GetCommandListEnumable() { return _commandSet; }
+    public virtual IEnumerable<BaseCommand> GetCommandListEnumerable() { return _commandSet; }
     public virtual void ReceiveCommands(BaseCommand command) { _commandSet.Add(command); }
 
     public virtual bool ExecuteCommand<Command>() where Command : BaseCommand
