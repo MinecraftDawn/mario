@@ -10,7 +10,7 @@ public class MonsterOnLandState : MonsterState
         bool x = monster.ExecuteCommand<MonsterMoveCommand>();
 
         bool exist_jump = monster.ExecuteCommand<JumpCommand>();
-        if (exist_jump || !monster.IsOnGround()) { return new MonsterInAirState(); }
+        if (exist_jump || !monster.IsOnGround()) { return monster.StateTransition<MonsterInAirState>(); }
 
         return this;
     }

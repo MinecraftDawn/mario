@@ -7,6 +7,7 @@ public interface BaseState
     public BaseState FixedUpdate(ActorBase actor);
     public BaseState StatusCheck(ActorBase actor);
     public void OnStateStart(ActorBase actor);
+    public void Reset();
 }
 
 }

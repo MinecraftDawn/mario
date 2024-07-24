@@ -95,7 +95,7 @@ public class Player : ActorBase
         base.ReceiveCommands(command);
     }
 
-    protected override BaseState InitialState() { return new OnLandState(); }
+    protected override void InitialState() { _stateManager.Init<OnLandState>(); }
     protected override void UpdateCommandHistory()
     {
         foreach (BaseCommand history_command in _commandHistoryInLastCycle) {

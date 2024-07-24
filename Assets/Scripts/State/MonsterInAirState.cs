@@ -10,7 +10,7 @@ public class MonsterInAirState : MonsterState
         Monster monster = (Monster) actor;
         monster.ExecuteCommand<MonsterMoveCommand>();
 
-        if (monster.IsOnGround()) { return new MonsterOnLandState(); }
+        if (monster.IsOnGround()) { return monster.StateTransition<MonsterOnLandState>(); }
         return this;
     }
 }

@@ -9,7 +9,6 @@ using UnityEngine;
 
 namespace Actor {
 public abstract class ActorBase : MonoBehaviour {
-    protected BaseState _state;
     protected HashSet<BaseCommand> _commandHistoryInLastCycle;
     protected HashSet<BaseCommand> _commandHistoryInCurrentCycle;
     protected HashSet<BaseCommand> _commandSet;
@@ -20,6 +19,7 @@ public abstract class ActorBase : MonoBehaviour {
     protected LayerMask _groundMask;
     protected Vector2 _groundDirection;
     protected CommandPool _commandPool;
+    protected StateManager _stateManager;
     public float horizontalSpeed = 3f;
     public float jumpForce = 3f;
     public float maxFallSpeed = 10f;
@@ -38,7 +38,8 @@ public abstract class ActorBase : MonoBehaviour {
     // Start is called before the first frame update
     public virtual void Start()
     {
-        _state = InitialState();
+        _stateManager = new StateManager();
+        InitialState();
         _commandSet = new HashSet<BaseCommand>();
         _commandHistoryInCurrentCycle = new HashSet<BaseCommand>();
         _commandHistoryInLastCycle = new HashSet<BaseCommand>();
@@ -51,7 +52,7 @@ public abstract class ActorBase : MonoBehaviour {
     // Update is called once per frame
     public virtual void Update()
     {
-        _state = _state.Update(this);
+        _stateManager.GetCurrentState().Update(this);
     }
 
     public virtual void FixedUpdate()
@@ -63,11 +64,14 @@ public abstract class ActorBase : MonoBehaviour {
 
     private void StateFixedUpdate()
     {
-        BaseState oldState = _state;
-        _state = _state.StatusCheck(this);
-        if (!ReferenceEquals(oldState, _state)) { _state.OnStateStart(this); }
-        _state = _state.FixedUpdate(this);
-        if (!ReferenceEquals(oldState, _state)) { _state.OnStateStart(this); }
+        BaseState old_state = _stateManager.GetCurrentState();
+        BaseState current_state = old_state.StatusCheck(this);
+        if (!ReferenceEquals(old_state, current_state)) { current_state.OnStateStart(this); }
+
+        old_state = _stateManager.GetCurrentState();
+        current_state = old_state.FixedUpdate(this);
+        if (!ReferenceEquals(old_state, current_state)) { current_state.OnStateStart(this); }
+
         CleanCommandList();
         UpdateCommandHistory();
     }
@@ -123,7 +127,7 @@ public abstract class ActorBase : MonoBehaviour {
     }
 
     public virtual Vector2 ObjectFaceDirection() { return transform.localScale.x > 0.0f ? Vector2.right : Vector2.left; }
-    protected virtual BaseState InitialState() { return null; }
+    protected virtual void InitialState() { Debug.Log("[Warning] InitialState no override!"); }
     protected virtual void PreparationBeforeFixedUpdate() { CollectState(); }
     public virtual void SetFriction(FrictionType friction_type) {}
     public Vector2 velocity {
@@ -134,9 +138,9 @@ public abstract class ActorBase : MonoBehaviour {
     public bool IsOnGround() { return _onGround; }
     public bool IsOnSlope() { return _onSlope; }
     public bool IsFalling() { return _isFalling; }
-    public Type GetStateType() { return _state.GetType(); }
-
-    public bool IsStateType<State>() { return _state is State; }
+    public Type GetStateType() { return _stateManager.GetCurrentState().GetType(); }
+    public State StateTransition<State>() where State : BaseState, new() { return _stateManager.StateTransition<State>(); }
+    public bool IsStateType<State>() { return _stateManager.GetCurrentState() is State; }
     public Vector2 GetGroundDirection() { return _groundDirection; }
 
     public virtual bool IsContainCommand<Command>() where Command : BaseCommand
