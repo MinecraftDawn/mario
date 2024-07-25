@@ -8,7 +8,6 @@ public class OnLandState : MovableState
 {
     public override BaseState FixedUpdate(ActorBase actor)
     {
-        // TODO: change to use parent class Actor.ActorBase
         Player player = (Player) actor;
         if (!player.IsContainCommand<SmoothMoveCommand>() && player.IsOnSlope()) {
             // prevent player slide fown from slope
@@ -22,7 +21,7 @@ public class OnLandState : MovableState
         // player.ExecuteCommand<TestCommand>(); // Just for test getKeyDown / Up
         
         bool exist_jump = player.ExecuteCommand<JumpCommand>();
-        if (exist_jump || !player.IsOnGround()) { return new InAirState(); }
+        if (exist_jump || !player.IsOnGround()) { return player.StateTransition<InAirState>(); }
 
         return this;
     }

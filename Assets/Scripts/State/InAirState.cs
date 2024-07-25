@@ -22,7 +22,7 @@ public class InAirState : MovableState{
     public override BaseState StatusCheck(ActorBase actor)
     {
         _freezeTick--;
-        if (_freezeTick < 0 && actor.IsOnGround()) { return new OnLandState(); }
+        if (_freezeTick < 0 && actor.IsOnGround()) { return actor.StateTransition<OnLandState>(); }
         return this;
     }
 
@@ -31,6 +31,12 @@ public class InAirState : MovableState{
         Player player = (Player)actor;
         player.SetFriction(FrictionType.NONE);
         player.SetGravityToBase();
+    }
+
+    public override void Reset()
+    {
+        _freezeTick = 1;
+        _startFalling = false;
     }
 
     private void ModifyFallingStatus(Player player)
