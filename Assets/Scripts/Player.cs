@@ -6,6 +6,7 @@ using State;
 using Actor;
 using enums;
 using UnityEngine;
+using utils;
 
 public class Player : ActorBase
 {
@@ -25,6 +26,11 @@ public class Player : ActorBase
     private float _accelerate = 5f;
     [SerializeField]
     private float _decelerate = 3f;
+    [SerializeField]
+    private DelayTimer _invincibleTimer;
+    private LayerMask _onlyGroundMask;
+    private LayerMask _originalExcludeMask;
+    private bool _isInvincible = false;
     private CapsuleCollider2D _capsuleCollider;
     public PhysicsMaterial2D fullFriction;
     public PhysicsMaterial2D noFriction;
@@ -35,11 +41,14 @@ public class Player : ActorBase
     {
         base.Start();
         _capsuleCollider = GetComponent<CapsuleCollider2D>();
+        _onlyGroundMask = ~LayerMask.GetMask("Ground");
+        _originalExcludeMask = _capsuleCollider.excludeLayers;
     }
 
     // Update is called once per frame
     public override void Update()
     {
+        if (_isInvincible && _invincibleTimer.HasDelayPassed()) { RemoveInvincible(); }
         base.Update();
     }
 
@@ -53,6 +62,7 @@ public class Player : ActorBase
         if (other.gameObject.tag == "MonsterBody") {
             health -= 1;
             if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
+            SetInvincible();
         }
     }
 
@@ -86,6 +96,19 @@ public class Player : ActorBase
     public float GetMoveSpeed() { return _moveSpeed; }
     public float GetAccelerate() { return _accelerate; }
     public float GetDecelerate() { return _decelerate; }
+    public bool IsInvincible() { return _isInvincible; }
+    public void SetInvincible()
+    {
+        _isInvincible = true;
+        _invincibleTimer.UpdateLastTime();
+        _capsuleCollider.excludeLayers = _onlyGroundMask;
+    }
+    public void RemoveInvincible()
+    {
+        _isInvincible = false;
+        _capsuleCollider.excludeLayers = _originalExcludeMask;
+    }
+
     public override void ReceiveCommands(BaseCommand command)
     {
         if (_commandSet.Contains(command)) {
