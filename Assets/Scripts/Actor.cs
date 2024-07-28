@@ -56,7 +56,9 @@ public abstract class ActorBase : MonoBehaviour {
     // Update is called once per frame
     public virtual void Update()
     {
-        _stateManager.GetCurrentState().Update(this);
+        BaseState old_state = _stateManager.GetCurrentState();
+        BaseState current_state = _stateManager.GetCurrentState().Update(this);
+        if (!ReferenceEquals(old_state, current_state)) { current_state.OnStateStart(this); }
     }
 
     public virtual void FixedUpdate()

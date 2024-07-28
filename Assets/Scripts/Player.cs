@@ -28,6 +28,8 @@ public class Player : ActorBase
     private float _decelerate = 3f;
     [SerializeField]
     private DelayTimer _invincibleTimer;
+    [SerializeField]
+    private float _unmoveTimeWhenHurt = 0.5f;
     private LayerMask _onlyGroundMask;
     private LayerMask _originalExcludeMask;
     private bool _isInvincible = false;
@@ -60,8 +62,13 @@ public class Player : ActorBase
     void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "MonsterBody") {
+            Debug.Log("Hurt by monster!");
             health -= 1;
             if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
+            velocity = Vector2.zero;
+            _moveSpeed = 0f;
+            StateTransition<UnmovableState>();
+            _stateManager.GetCurrentState().OnStateStart(this);
             SetInvincible();
         }
     }
@@ -93,9 +100,11 @@ public class Player : ActorBase
     public void SetGravityToBase() { _rigidbody.gravityScale = _gravity; }
     public void SetGravityToHalf() { _rigidbody.gravityScale = _gravity * (_fallMultiplier / 2); }
     public void SetGravityToZero() { _rigidbody.gravityScale = 0; }
+    public void CleanMoveSpeed() { _moveSpeed = 0f; }
     public float GetMoveSpeed() { return _moveSpeed; }
     public float GetAccelerate() { return _accelerate; }
     public float GetDecelerate() { return _decelerate; }
+    public float GetUnmoveTime() { return _unmoveTimeWhenHurt; }
     public bool IsInvincible() { return _isInvincible; }
     public void SetInvincible()
     {
@@ -118,7 +127,11 @@ public class Player : ActorBase
         base.ReceiveCommands(command);
     }
 
-    protected override void InitialState() { _stateManager.Init<OnLandState>(); }
+    protected override void InitialState()
+    {
+        _stateManager.Init<OnLandState>();
+        // _stateManager.Init<UnmovableState>();
+    }
     protected override void UpdateCommandHistory()
     {
         foreach (BaseCommand history_command in _commandHistoryInLastCycle) {
