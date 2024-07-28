@@ -26,14 +26,14 @@ public class UnmovableState : BaseState
     public BaseState FixedUpdate(ActorBase actor)
     {
         Player player = (Player)actor;
-        if (actor.IsOnSlope()) {
+        if (actor.IsOnGround() && actor.IsOnSlope()) {
             player.SetGravityToZero();
         } else {
             player.SetGravityToFull();
         }
-        // float current_speed = player.GetMoveSpeed();
-        // float speed_diff = -current_speed;
-        // player.AddMovementForce(speed_diff * player.GetDecelerate());
+        float current_speed = player.GetMoveSpeed();
+        float speed_diff = -current_speed;
+        player.AddMovementForce(speed_diff * player.GetDecelerate() / 2);
         return this;
     }
 
@@ -45,7 +45,7 @@ public class UnmovableState : BaseState
         duration.ResetLatency(player.GetUnmoveTime());
         duration.UpdateLastTime();
         player.SetGravityToFull();
-        player.CleanMoveSpeed();
+        player.SyncMoveSpeedWithVelocityX();
     }
 
     public void Reset()

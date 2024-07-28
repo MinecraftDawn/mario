@@ -66,7 +66,7 @@ public class Player : ActorBase
             health -= 1;
             if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
             velocity = Vector2.zero;
-            _moveSpeed = 0f;
+            _rigidbody.AddForce(other.gameObject.GetComponent<Monster>().ComputeHitForce(this), ForceMode2D.Impulse);
             StateTransition<UnmovableState>();
             _stateManager.GetCurrentState().OnStateStart(this);
             SetInvincible();
@@ -86,7 +86,8 @@ public class Player : ActorBase
     {
         // formula: f = ma, a = f / m
         _moveSpeed = _moveSpeed + Time.deltaTime * (force / _rigidbody.mass);
-        if (IsStateType<OnLandState>() && IsOnSlope()) {
+        // if ((IsStateType<OnLandState>() || IsStateType<UnmovableState>()) && IsOnSlope()) {
+        if (IsOnGround() && IsOnSlope()) {
             velocity = _moveSpeed * GetGroundDirection();
         } else {
             velocity = new Vector2(_moveSpeed, velocity.y);
@@ -101,6 +102,7 @@ public class Player : ActorBase
     public void SetGravityToHalf() { _rigidbody.gravityScale = _gravity * (_fallMultiplier / 2); }
     public void SetGravityToZero() { _rigidbody.gravityScale = 0; }
     public void CleanMoveSpeed() { _moveSpeed = 0f; }
+    public void SyncMoveSpeedWithVelocityX() { _moveSpeed = velocity.x; }
     public float GetMoveSpeed() { return _moveSpeed; }
     public float GetAccelerate() { return _accelerate; }
     public float GetDecelerate() { return _decelerate; }
