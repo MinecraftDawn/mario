@@ -52,8 +52,8 @@ public class Player : ActorBase
     {
         if (other.gameObject.tag == "MonsterBody") {
             health -= 1;
+            if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
         }
-        if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
     }
 
     public override void SetFriction(FrictionType friction_type)

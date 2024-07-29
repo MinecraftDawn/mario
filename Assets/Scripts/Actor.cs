@@ -28,6 +28,10 @@ public abstract class ActorBase : MonoBehaviour {
     public Vector2 groundCastCenterOffset;
     public Vector2 directionCastBoxSize = new Vector2(0.3f, 0.4f);
 
+    /************************************************************
+    * Major Method
+    *************************************************************/
+
     private void OnDrawGizmos()
     {
         Vector2 center = transform.position;
@@ -84,6 +88,12 @@ public abstract class ActorBase : MonoBehaviour {
         _isFalling = IsStateType<InAirState>() && _rigidbody.velocity.y <= 0f;
     }
 
+    protected virtual void PreparationBeforeFixedUpdate() { CollectState(); }
+
+    /************************************************************
+    * Detection Method
+    ************************************************************/
+
     protected virtual RaycastHit2D? DetectGround() 
     {
         Vector2 center = transform.position;
@@ -119,42 +129,28 @@ public abstract class ActorBase : MonoBehaviour {
         return hit ? hit : null; // check hit.collider is empty or not
     }
 
-    public virtual void FlipObject()
-    {
-        Vector3 scale = transform.localScale;
-        scale.x *= -1f;
-        transform.localScale = scale;
-    }
-
-    public virtual Vector2 ObjectFaceDirection() { return transform.localScale.x > 0.0f ? Vector2.right : Vector2.left; }
+    /************************************************************
+    * State Related Method
+    ************************************************************/
+    
     protected virtual void InitialState() { Debug.Log("[Warning] InitialState no override!"); }
-    protected virtual void PreparationBeforeFixedUpdate() { CollectState(); }
-    public virtual void SetFriction(FrictionType friction_type) {}
-    public Vector2 velocity {
-        get { return _rigidbody.velocity; }
-        set { _rigidbody.velocity = value; }
-    }
-    public Rigidbody2D GetRigidbody() { return _rigidbody; }
-    public bool IsOnGround() { return _onGround; }
-    public bool IsOnSlope() { return _onSlope; }
-    public bool IsFalling() { return _isFalling; }
     public Type GetStateType() { return _stateManager.GetCurrentState().GetType(); }
     public State StateTransition<State>() where State : BaseState, new() { return _stateManager.StateTransition<State>(); }
     public bool IsStateType<State>() { return _stateManager.GetCurrentState() is State; }
-    public Vector2 GetGroundDirection() { return _groundDirection; }
+
+    /************************************************************
+    * Command Related Method
+    ************************************************************/
 
     public virtual bool IsContainCommand<Command>() where Command : BaseCommand
     {
         return _commandSet.Contains(_commandPool.GetSample<Command>());
     }
+
     public virtual bool IsContainCommandInLastCycle<Command>() where Command : BaseCommand
     {
         return _commandHistoryInLastCycle.Contains(_commandPool.GetSample<Command>());
     }
-    public virtual int GetCommandListSize() { return _commandSet.Count; }
-    public virtual void CleanCommandList() { _commandSet.Clear(); }
-    public virtual IEnumerable<BaseCommand> GetCommandListEnumerable() { return _commandSet; }
-    public virtual void ReceiveCommands(BaseCommand command) { _commandSet.Add(command); }
 
     public virtual bool ExecuteCommand<Command>() where Command : BaseCommand
     {
@@ -183,5 +179,39 @@ public abstract class ActorBase : MonoBehaviour {
         }
         _commandHistoryInCurrentCycle.Clear();
     }
+
+    public virtual int GetCommandListSize() { return _commandSet.Count; }
+    public virtual void CleanCommandList() { _commandSet.Clear(); }
+    public virtual IEnumerable<BaseCommand> GetCommandListEnumerable() { return _commandSet; }
+    public virtual void ReceiveCommands(BaseCommand command) { _commandSet.Add(command); }
+
+    /************************************************************
+    * Getter/Setter and Boolean Status Check Method
+    ************************************************************/
+
+    public virtual void SetFriction(FrictionType friction_type) {}
+    public Vector2 velocity {
+        get { return _rigidbody.velocity; }
+        set { _rigidbody.velocity = value; }
+    }
+    public Rigidbody2D GetRigidbody() { return _rigidbody; }
+    public Vector2 GetGroundDirection() { return _groundDirection; }
+    public bool IsOnGround() { return _onGround; }
+    public bool IsOnSlope() { return _onSlope; }
+    public bool IsFalling() { return _isFalling; }
+
+    /************************************************************
+    * Others
+    ************************************************************/
+
+    public virtual void FlipObject()
+    {
+        Vector3 scale = transform.localScale;
+        scale.x *= -1f;
+        transform.localScale = scale;
+    }
+
+    public virtual Vector2 ObjectFaceDirection() { return transform.localScale.x > 0.0f ? Vector2.right : Vector2.left; }
+
 }
 }
