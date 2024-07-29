@@ -32,7 +32,10 @@ public class UnmovableState : BaseState
             player.SetGravityToFull();
         }
         float current_speed = player.GetMoveSpeed();
-        float speed_diff = -current_speed;
+        float target_speed = 0f;
+        float lerp = actor.IsOnGround() ? 1.0f : 0.5f;
+        target_speed = Mathf.Lerp(current_speed, target_speed, lerp);
+        float speed_diff = target_speed - current_speed;
         player.AddMovementForce(speed_diff * player.GetDecelerate() / 2);
         return this;
     }
