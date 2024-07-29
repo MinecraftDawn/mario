@@ -6,13 +6,26 @@ using State;
 using Actor;
 using enums;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Player : ActorBase
 {
 
+    [SerializeField]
+    private float _gravity = 1f;
+    [SerializeField]
+    private float _linearDrag = 4f;
+    [SerializeField]
+    private float _fallMultiplier = 3f;
+    [SerializeField]
+    // This attribute is used to compute player's movement speed.
+    // It is calculated independently, and will overwrite the rigidbody velocity in some rule.
+    // For detail implementation see AddForce method in below.
+    private float _moveSpeed = 0f; 
+    [SerializeField]
+    private float _accelerate = 5f;
+    [SerializeField]
+    private float _decelerate = 3f;
     private CapsuleCollider2D _capsuleCollider;
-    private Vector2 _capsuleSize;
     public PhysicsMaterial2D fullFriction;
     public PhysicsMaterial2D noFriction;
     public int health = 3;
@@ -22,7 +35,6 @@ public class Player : ActorBase
     {
         base.Start();
         _capsuleCollider = GetComponent<CapsuleCollider2D>();
-        _capsuleSize = _capsuleCollider.size;
     }
 
     // Update is called once per frame
@@ -40,8 +52,8 @@ public class Player : ActorBase
     {
         if (other.gameObject.tag == "MonsterBody") {
             health -= 1;
+            if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
         }
-        if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
     }
 
     public override void SetFriction(FrictionType friction_type)
@@ -53,5 +65,51 @@ public class Player : ActorBase
         }
     }
 
-    protected override BaseState InitialState() { return new OnLandState(); }
+    public void AddMovementForce(float force)
+    {
+        // formula: f = ma, a = f / m
+        _moveSpeed = _moveSpeed + Time.deltaTime * (force / _rigidbody.mass);
+        if (IsStateType<OnLandState>() && IsOnSlope()) {
+            velocity = _moveSpeed * GetGroundDirection();
+        } else {
+            velocity = new Vector2(_moveSpeed, velocity.y);
+        }
+    }
+
+    public void NoDrag() { _rigidbody.drag = 0; }
+    public void ResetDrag() { _rigidbody.drag = _linearDrag; }
+    public void NoGravity() { _rigidbody.gravityScale = 0; }
+    public void SetGravityToFull() { _rigidbody.gravityScale = _gravity * _fallMultiplier; }
+    public void SetGravityToBase() { _rigidbody.gravityScale = _gravity; }
+    public void SetGravityToHalf() { _rigidbody.gravityScale = _gravity * (_fallMultiplier / 2); }
+    public void SetGravityToZero() { _rigidbody.gravityScale = 0; }
+    public float GetMoveSpeed() { return _moveSpeed; }
+    public float GetAccelerate() { return _accelerate; }
+    public float GetDecelerate() { return _decelerate; }
+    public override void ReceiveCommands(BaseCommand command)
+    {
+        if (_commandSet.Contains(command)) {
+            _commandPool.ReturnObject(command);
+            return;
+        }
+        base.ReceiveCommands(command);
+    }
+
+    protected override void InitialState() { _stateManager.Init<OnLandState>(); }
+    protected override void UpdateCommandHistory()
+    {
+        foreach (BaseCommand history_command in _commandHistoryInLastCycle) {
+            _commandPool.ReturnObject(history_command);
+        }
+        base.UpdateCommandHistory();
+    }
+
+    public override void CleanCommandList()
+    {
+        foreach (BaseCommand command in _commandSet) {
+            _commandPool.ReturnObject(command);
+        }
+        base.CleanCommandList();
+    }
+
 }

@@ -52,7 +52,7 @@ public class Monster : ActorBase
         return hit ? hit : null;
     }
 
-    protected override BaseState InitialState() { return new MonsterOnLandState(); }
+    protected override void InitialState() { _stateManager.Init<MonsterOnLandState>(); }
 
     public bool IsFrontWall() { return _frontWall; }
     public bool GetMoveToRight() { return _moveToRight; }
