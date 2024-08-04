@@ -8,6 +8,8 @@ public class Monster : ActorBase
 {
     public float frontWallDetectRayLength = 0.1f;
     public Detector detector;
+    [SerializeField]
+    private float _hitForce = 5f;
     private Strategy.MonsterAI _strategy;
     private CapsuleCollider2D _capsuleCollider;
     private Vector2 _capsuleSize;
@@ -52,7 +54,7 @@ public class Monster : ActorBase
         return hit ? hit : null;
     }
 
-    protected override BaseState InitialState() { return new MonsterOnLandState(); }
+    protected override void InitialState() { _stateManager.Init<MonsterOnLandState>(); }
 
     public bool IsFrontWall() { return _frontWall; }
     public bool GetMoveToRight() { return _moveToRight; }
@@ -60,5 +62,12 @@ public class Monster : ActorBase
     {
         FlipObject();
         _moveToRight = !_moveToRight;
+    }
+    public Vector2 ComputeHitForce(Player player)
+    {
+        Vector2 to_player = player.transform.position - transform.position;
+        Vector2 direction = new Vector2(0.5f, 0.5f).normalized;
+        direction.x *= Mathf.Sign(to_player.x);
+        return direction * _hitForce;
     }
 }
