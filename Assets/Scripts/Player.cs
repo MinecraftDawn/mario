@@ -63,13 +63,7 @@ public class Player : ActorBase
     {
         if (other.gameObject.tag == "MonsterBody") {
             Debug.Log("Hurt by monster!");
-            health -= 1;
-            if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
-            velocity = Vector2.zero;
-            _rigidbody.AddForce(other.gameObject.GetComponent<Monster>().ComputeHitForce(this), ForceMode2D.Impulse);
-            StateTransition<UnmovableState>();
-            _stateManager.GetCurrentState().OnStateStart(this);
-            SetInvincible();
+            Hurt(other.gameObject.GetComponent<Monster>().ComputeHitForce(this));
         }
     }
 
@@ -82,10 +76,15 @@ public class Player : ActorBase
         }
     }
 
-    public void Hurt()
+    public void Hurt(Vector2 force)
     {
         health -= 1;
         if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
+        velocity = Vector2.zero;
+        _rigidbody.AddForce(force, ForceMode2D.Impulse);
+        StateTransition<UnmovableState>();
+        _stateManager.GetCurrentState().OnStateStart(this);
+        SetInvincible();
     }
     
     public void AddMovementForce(float force)

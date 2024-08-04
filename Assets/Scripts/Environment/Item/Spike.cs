@@ -8,6 +8,6 @@ public class Spike : ItemBase
     public override void Effect(ActorBase actor)
     {
         Player player = (Player)actor;
-        player.Hurt();
+        player.Hurt(Vector2.zero);
     }
 }
