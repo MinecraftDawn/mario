@@ -6,13 +6,34 @@ using State;
 using Actor;
 using enums;
 using UnityEngine;
-using UnityEngine.UI;
+using utils;
 
 public class Player : ActorBase
 {
 
+    [SerializeField]
+    private float _gravity = 1f;
+    [SerializeField]
+    private float _linearDrag = 4f;
+    [SerializeField]
+    private float _fallMultiplier = 3f;
+    [SerializeField]
+    // This attribute is used to compute player's movement speed.
+    // It is calculated independently, and will overwrite the rigidbody velocity in some rule.
+    // For detail implementation see AddForce method in below.
+    private float _moveSpeed = 0f; 
+    [SerializeField]
+    private float _accelerate = 5f;
+    [SerializeField]
+    private float _decelerate = 3f;
+    [SerializeField]
+    private DelayTimer _invincibleTimer;
+    [SerializeField]
+    private float _unmoveTimeWhenHurt = 0.5f;
+    private LayerMask _onlyGroundMask;
+    private LayerMask _originalExcludeMask;
+    private bool _isInvincible = false;
     private CapsuleCollider2D _capsuleCollider;
-    private Vector2 _capsuleSize;
     public PhysicsMaterial2D fullFriction;
     public PhysicsMaterial2D noFriction;
     public int health = 3;
@@ -22,12 +43,14 @@ public class Player : ActorBase
     {
         base.Start();
         _capsuleCollider = GetComponent<CapsuleCollider2D>();
-        _capsuleSize = _capsuleCollider.size;
+        _onlyGroundMask = ~LayerMask.GetMask("Ground");
+        _originalExcludeMask = _capsuleCollider.excludeLayers;
     }
 
     // Update is called once per frame
     public override void Update()
     {
+        if (_isInvincible && _invincibleTimer.HasDelayPassed()) { RemoveInvincible(); }
         base.Update();
     }
 
@@ -39,9 +62,15 @@ public class Player : ActorBase
     void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "MonsterBody") {
+            Debug.Log("Hurt by monster!");
             health -= 1;
+            if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
+            velocity = Vector2.zero;
+            _rigidbody.AddForce(other.gameObject.GetComponent<Monster>().ComputeHitForce(this), ForceMode2D.Impulse);
+            StateTransition<UnmovableState>();
+            _stateManager.GetCurrentState().OnStateStart(this);
+            SetInvincible();
         }
-        if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
     }
 
     public override void SetFriction(FrictionType friction_type)
@@ -53,5 +82,72 @@ public class Player : ActorBase
         }
     }
 
-    protected override BaseState InitialState() { return new OnLandState(); }
+    public void AddMovementForce(float force)
+    {
+        // formula: f = ma, a = f / m
+        _moveSpeed = _moveSpeed + Time.deltaTime * (force / _rigidbody.mass);
+        // if ((IsStateType<OnLandState>() || IsStateType<UnmovableState>()) && IsOnSlope()) {
+        if (IsOnGround() && IsOnSlope()) {
+            velocity = _moveSpeed * GetGroundDirection();
+        } else {
+            velocity = new Vector2(_moveSpeed, velocity.y);
+        }
+    }
+
+    public void NoDrag() { _rigidbody.drag = 0; }
+    public void ResetDrag() { _rigidbody.drag = _linearDrag; }
+    public void NoGravity() { _rigidbody.gravityScale = 0; }
+    public void SetGravityToFull() { _rigidbody.gravityScale = _gravity * _fallMultiplier; }
+    public void SetGravityToBase() { _rigidbody.gravityScale = _gravity; }
+    public void SetGravityToHalf() { _rigidbody.gravityScale = _gravity * (_fallMultiplier / 2); }
+    public void SetGravityToZero() { _rigidbody.gravityScale = 0; }
+    public void CleanMoveSpeed() { _moveSpeed = 0f; }
+    public void SyncMoveSpeedWithVelocityX() { _moveSpeed = velocity.x; }
+    public float GetMoveSpeed() { return _moveSpeed; }
+    public float GetAccelerate() { return _accelerate; }
+    public float GetDecelerate() { return _decelerate; }
+    public float GetUnmoveTime() { return _unmoveTimeWhenHurt; }
+    public bool IsInvincible() { return _isInvincible; }
+    public void SetInvincible()
+    {
+        _isInvincible = true;
+        _invincibleTimer.UpdateLastTime();
+        _capsuleCollider.excludeLayers = _onlyGroundMask;
+    }
+    public void RemoveInvincible()
+    {
+        _isInvincible = false;
+        _capsuleCollider.excludeLayers = _originalExcludeMask;
+    }
+
+    public override void ReceiveCommands(BaseCommand command)
+    {
+        if (_commandSet.Contains(command)) {
+            _commandPool.ReturnObject(command);
+            return;
+        }
+        base.ReceiveCommands(command);
+    }
+
+    protected override void InitialState()
+    {
+        _stateManager.Init<OnLandState>();
+        // _stateManager.Init<UnmovableState>();
+    }
+    protected override void UpdateCommandHistory()
+    {
+        foreach (BaseCommand history_command in _commandHistoryInLastCycle) {
+            _commandPool.ReturnObject(history_command);
+        }
+        base.UpdateCommandHistory();
+    }
+
+    public override void CleanCommandList()
+    {
+        foreach (BaseCommand command in _commandSet) {
+            _commandPool.ReturnObject(command);
+        }
+        base.CleanCommandList();
+    }
+
 }
