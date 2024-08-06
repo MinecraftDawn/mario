@@ -10,8 +10,6 @@ public class MaceChain : MonoBehaviour
     [SerializeField]
     private float _maxAngle = 45.0f;
     [SerializeField]
-    private float _angularSpeed = 1f;
-    [SerializeField]
     private float _gravity = 9.81f;
     private Rigidbody2D _chainBodyRigidbody;
     private float _length;
