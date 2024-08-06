@@ -30,7 +30,7 @@ public class Player : ActorBase
     private DelayTimer _invincibleTimer;
     [SerializeField]
     private float _unmoveTimeWhenHurt = 0.5f;
-    private LayerMask _onlyGroundMask;
+    private LayerMask _invincibleExcludeLayer;
     private LayerMask _originalExcludeMask;
     private bool _isInvincible = false;
     private CapsuleCollider2D _capsuleCollider;
@@ -43,7 +43,7 @@ public class Player : ActorBase
     {
         base.Start();
         _capsuleCollider = GetComponent<CapsuleCollider2D>();
-        _onlyGroundMask = ~LayerMask.GetMask("Ground");
+        _invincibleExcludeLayer = ~LayerMask.GetMask("Ground") & ~LayerMask.GetMask("Item");
         _originalExcludeMask = _capsuleCollider.excludeLayers;
     }
 
@@ -117,10 +117,11 @@ public class Player : ActorBase
     {
         _isInvincible = true;
         _invincibleTimer.UpdateLastTime();
-        _capsuleCollider.excludeLayers = _onlyGroundMask;
+        _capsuleCollider.excludeLayers = _invincibleExcludeLayer;
     }
     public void RemoveInvincible()
     {
+        Debug.Log("remove invincible");
         _isInvincible = false;
         _capsuleCollider.excludeLayers = _originalExcludeMask;
     }
