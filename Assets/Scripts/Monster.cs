@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Actor;
+using Command;
 using State;
 
 public class Monster : ActorBase
@@ -69,5 +70,30 @@ public class Monster : ActorBase
         Vector2 direction = new Vector2(0.5f, 0.5f).normalized;
         direction.x *= Mathf.Sign(to_player.x);
         return direction * _hitForce;
+    }
+    
+    public override void ReceiveCommands(BaseCommand command)
+    {
+        if (_commandSet.Contains(command)) {
+            _commandPool.ReturnObject(command);
+            return;
+        }
+        base.ReceiveCommands(command);
+    }
+    
+    public override void CleanCommandList()
+    {
+        foreach (BaseCommand command in _commandSet) {
+            _commandPool.ReturnObject(command);
+        }
+        base.CleanCommandList();
+    }
+    
+    protected override void UpdateCommandHistory()
+    {
+        foreach (BaseCommand history_command in _commandHistoryInLastCycle) {
+            _commandPool.ReturnObject(history_command);
+        }
+        base.UpdateCommandHistory();
     }
 }

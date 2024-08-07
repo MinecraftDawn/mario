@@ -116,6 +116,8 @@ public class MonsterMoveCommand : MoveCommand
 
     public MonsterMoveCommand() { speedUp = 1f; }
     public MonsterMoveCommand(float speed_up) { speedUp = speed_up; }
+    
+    public void setSpeedUp(float speed_up) { speedUp = speed_up; }
 
     public override void Execute(Actor.ActorBase actor)
     {
