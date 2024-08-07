@@ -17,7 +17,6 @@ public class Teleport : ItemBase
             _isAvailable = true;
             return;
         }
-        Debug.Log("player should be teleport");
         _target.SetIgnoreOnce();
         actor.transform.position = _target.transform.position;
     }
