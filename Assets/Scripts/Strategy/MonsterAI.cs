@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Command;
 
-namespace Strategy {
+namespace Strategy
+{
 
 public abstract class MonsterAI : MonoBehaviour
 {
