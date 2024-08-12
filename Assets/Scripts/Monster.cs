@@ -24,7 +24,7 @@ public class Monster : ActorBase
         base.Start();
         _strategy = GetComponent<Strategy.MonsterAI>();
         _capsuleCollider = GetComponent<CapsuleCollider2D>();
-        _capsuleSize = _capsuleCollider.size;
+        _capsuleSize = _capsuleCollider == null ? Vector2.zero : _capsuleCollider.size;
     }
 
     protected override void PreparationBeforeFixedUpdate()

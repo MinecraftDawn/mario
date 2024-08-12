@@ -37,7 +37,6 @@ public class CircleDetector : Detector
     protected override Collider2D Detect()
     {
         Collider2D collider = Physics2D.OverlapCircle(transform.position, _radius, detectLayer);
-        Debug.Log(transform.position);
         if (!collider) { return null; }
         Vector2 to_player = collider.transform.position - transform.position;
         float angle = Vector2.SignedAngle(Vector2.right, to_player);
