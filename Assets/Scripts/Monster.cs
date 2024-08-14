@@ -45,12 +45,11 @@ public class Monster : ActorBase
 
     protected RaycastHit2D? DetectFrontWall()
     {
-        LayerMask ground_mask = LayerMask.GetMask("Ground");
         Vector2 start_position = _rigidbody.position;
         Vector2 direction = Vector2.right * (GetMoveToRight() ? 1 : -1);
         start_position.y += _capsuleSize.y / 2;
         float ray_length = _capsuleSize.x / 2 + frontWallDetectRayLength;
-        RaycastHit2D hit = Physics2D.Raycast(start_position, direction, ray_length, ground_mask);
+        RaycastHit2D hit = Physics2D.Raycast(start_position, direction, ray_length, _groundMask);
         Debug.DrawRay(start_position, direction * ray_length, Color.red);
         return hit ? hit : null;
     }
