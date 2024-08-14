@@ -5,6 +5,8 @@ using Actor;
 using Command;
 using State;
 
+namespace Monster {
+
 public class Monster : ActorBase
 {
     public float frontWallDetectRayLength = 0.1f;
@@ -95,4 +97,6 @@ public class Monster : ActorBase
         }
         base.UpdateCommandHistory();
     }
+}
+
 }

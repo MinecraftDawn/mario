@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Command;
 using Envrionment.Projectile;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -22,16 +23,17 @@ public class AutoProjectile : MonsterAI
         _projectileManager = new ProjectileManager(projectile);
     }
 
-    public override void Decide(Monster monster)
+    public override void Decide(Monster.Monster monster)
     {
         GameObject player_obj = monster.GetDetectedPlayer();
         if (!player_obj || !_fireInterval.HasDelayPassed()) { return; }
         // fire projectile
-        GameObject new_projectile = _projectileManager.GetInstance();
-        new_projectile.transform.position = transform.position + (Vector3)_firePosition;
-        Vector2 fire_direction = player_obj.transform.position - transform.position;
-        Rigidbody2D projectile_rigid = new_projectile.GetComponent<Rigidbody2D>();
-        projectile_rigid.velocity = fire_direction.normalized * 5f;
+        FireProjectileCommand fire_command = monster.GenerateCommand<FireProjectileCommand>();
+        fire_command.SetProjectile(_projectileManager.GetInstance());
+        fire_command.SetFirePosition(transform.position + (Vector3)_firePosition);
+        fire_command.SetDirection(player_obj.transform.position - transform.position);
+        fire_command.SetSpeed(5f);
+        monster.ReceiveCommands(fire_command);
         _fireInterval.UpdateLastTime();
     }
 }
