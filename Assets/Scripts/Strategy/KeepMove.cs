@@ -11,7 +11,9 @@ public class KeepMove : MonsterAI
     public override void Decide(Monster monster) 
     {
         if (monster.IsFrontWall()) { monster.TurnAround(); }
-        monster.ReceiveCommands(new MonsterMoveCommand());
+
+        MonsterMoveCommand command = monster.GenerateCommand<MonsterMoveCommand>();
+        monster.ReceiveCommands(command);
     }
 }
 
