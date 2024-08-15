@@ -15,7 +15,7 @@ public class PlayerFoot : MonoBehaviour
     
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag == "MonsterHead") {
+        if (other.gameObject.tag == "MonsterWeakness") {
             Vector2 velocity = _player.velocity;
             velocity.y = 0f;
             _player.velocity = velocity;
