@@ -154,7 +154,6 @@ public class FireProjectileCommand : BaseCommand
 
     public override void Execute(ActorBase actor)
     {
-        Debug.Log("Execute called");
         CheckUsing();
         Rigidbody2D projectile_rigid = _projectile.GetComponent<Rigidbody2D>();
         _projectile.transform.position = _firePosition;
