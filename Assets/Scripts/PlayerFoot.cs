@@ -16,13 +16,12 @@ public class PlayerFoot : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "MonsterHead") {
-            Debug.Log("hit the weakness");
             Vector2 velocity = _player.velocity;
             velocity.y = 0f;
             _player.velocity = velocity;
             _player.GetRigidbody().AddForce(_reactionForce * Vector2.up, ForceMode2D.Impulse);
             // Destroy(other.gameObject.transform.parent.gameObject);
-            // other.gameObject.transform.parent.gameObject.SetActive(false);
+            other.gameObject.transform.parent.gameObject.SetActive(false);
         }
     }
 }
