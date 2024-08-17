@@ -55,8 +55,16 @@ public class TracePlayer : KeepMove
                 tracePlayerTurnAroundTimer.UpdateLastTime();
             }
         }
-        if (monster.IsFrontWall()) { monster.ReceiveCommands(new JumpCommand()); }
-        monster.ReceiveCommands(new MonsterMoveCommand(speedUpWhenTracing));
+        
+        if (monster.IsFrontWall()) 
+        {
+            JumpCommand jumpCommand = monster.GenerateCommand<JumpCommand>();
+            monster.ReceiveCommands(jumpCommand);
+        }
+
+        MonsterMoveCommand monsterMoveCommand = monster.GenerateCommand<MonsterMoveCommand>();
+        monsterMoveCommand.setSpeedUp(speedUpWhenTracing);
+        monster.ReceiveCommands(monsterMoveCommand);
     }
 }
 

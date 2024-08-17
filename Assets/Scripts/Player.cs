@@ -30,7 +30,7 @@ public class Player : ActorBase
     private DelayTimer _invincibleTimer;
     [SerializeField]
     private float _unmoveTimeWhenHurt = 0.5f;
-    private LayerMask _onlyGroundMask;
+    private LayerMask _invincibleExcludeLayer;
     private LayerMask _originalExcludeMask;
     private bool _isInvincible = false;
     private CapsuleCollider2D _capsuleCollider;
@@ -43,7 +43,7 @@ public class Player : ActorBase
     {
         base.Start();
         _capsuleCollider = GetComponent<CapsuleCollider2D>();
-        _onlyGroundMask = ~LayerMask.GetMask("Ground");
+        _invincibleExcludeLayer = ~LayerMask.GetMask("Ground") & ~LayerMask.GetMask("Item");
         _originalExcludeMask = _capsuleCollider.excludeLayers;
     }
 
@@ -63,13 +63,7 @@ public class Player : ActorBase
     {
         if (other.gameObject.tag == "MonsterBody") {
             Debug.Log("Hurt by monster!");
-            health -= 1;
-            if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
-            velocity = Vector2.zero;
-            _rigidbody.AddForce(other.gameObject.GetComponent<Monster>().ComputeHitForce(this), ForceMode2D.Impulse);
-            StateTransition<UnmovableState>();
-            _stateManager.GetCurrentState().OnStateStart(this);
-            SetInvincible();
+            Hurt(other.gameObject.GetComponent<Monster>().ComputeHitForce(this));
         }
     }
 
@@ -82,6 +76,17 @@ public class Player : ActorBase
         }
     }
 
+    public void Hurt(Vector2 force)
+    {
+        health -= 1;
+        if (health <= 0) { GameContext.eventQueue.Enqueue(new Event.PlayerDead()); }
+        velocity = Vector2.zero;
+        _rigidbody.AddForce(force, ForceMode2D.Impulse);
+        StateTransition<UnmovableState>();
+        _stateManager.GetCurrentState().OnStateStart(this);
+        SetInvincible();
+    }
+    
     public void AddMovementForce(float force)
     {
         // formula: f = ma, a = f / m
@@ -112,10 +117,11 @@ public class Player : ActorBase
     {
         _isInvincible = true;
         _invincibleTimer.UpdateLastTime();
-        _capsuleCollider.excludeLayers = _onlyGroundMask;
+        _capsuleCollider.excludeLayers = _invincibleExcludeLayer;
     }
     public void RemoveInvincible()
     {
+        Debug.Log("remove invincible");
         _isInvincible = false;
         _capsuleCollider.excludeLayers = _originalExcludeMask;
     }

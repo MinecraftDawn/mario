@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Actor;
+using Command;
 using State;
 
 public class Monster : ActorBase
@@ -44,12 +45,11 @@ public class Monster : ActorBase
 
     protected RaycastHit2D? DetectFrontWall()
     {
-        LayerMask ground_mask = LayerMask.GetMask("Ground");
         Vector2 start_position = _rigidbody.position;
         Vector2 direction = Vector2.right * (GetMoveToRight() ? 1 : -1);
         start_position.y += _capsuleSize.y / 2;
         float ray_length = _capsuleSize.x / 2 + frontWallDetectRayLength;
-        RaycastHit2D hit = Physics2D.Raycast(start_position, direction, ray_length, ground_mask);
+        RaycastHit2D hit = Physics2D.Raycast(start_position, direction, ray_length, _groundMask);
         Debug.DrawRay(start_position, direction * ray_length, Color.red);
         return hit ? hit : null;
     }
@@ -69,5 +69,30 @@ public class Monster : ActorBase
         Vector2 direction = new Vector2(0.5f, 0.5f).normalized;
         direction.x *= Mathf.Sign(to_player.x);
         return direction * _hitForce;
+    }
+    
+    public override void ReceiveCommands(BaseCommand command)
+    {
+        if (_commandSet.Contains(command)) {
+            _commandPool.ReturnObject(command);
+            return;
+        }
+        base.ReceiveCommands(command);
+    }
+    
+    public override void CleanCommandList()
+    {
+        foreach (BaseCommand command in _commandSet) {
+            _commandPool.ReturnObject(command);
+        }
+        base.CleanCommandList();
+    }
+    
+    protected override void UpdateCommandHistory()
+    {
+        foreach (BaseCommand history_command in _commandHistoryInLastCycle) {
+            _commandPool.ReturnObject(history_command);
+        }
+        base.UpdateCommandHistory();
     }
 }
