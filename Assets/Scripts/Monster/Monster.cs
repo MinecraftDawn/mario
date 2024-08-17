@@ -97,6 +97,8 @@ public class Monster : ActorBase
         }
         base.UpdateCommandHistory();
     }
+    
+    virtual public void Damaged() { Destroy(gameObject); }
 }
 
 }

@@ -136,18 +136,15 @@ public class MonsterMoveCommand : MoveCommand
 
 public class FireProjectileCommand : BaseCommand
 {
-    private GameObject _projectile;
     private Vector2 _direction;
     private Vector2 _firePosition;
     private float _projectileSpeed;
     public FireProjectileCommand()
     {
-        _projectile = null;
         _direction = Vector2.right;
         _projectileSpeed = 1f;
     }
 
-    public void SetProjectile(GameObject projectile) { _projectile = projectile; }
     public void SetDirection(Vector2 direction) { _direction = direction; }
     public void SetFirePosition(Vector2 position) { _firePosition = position; }
     public void SetSpeed(float speed) { _projectileSpeed = speed; }
@@ -155,8 +152,10 @@ public class FireProjectileCommand : BaseCommand
     public override void Execute(ActorBase actor)
     {
         CheckUsing();
-        Rigidbody2D projectile_rigid = _projectile.GetComponent<Rigidbody2D>();
-        _projectile.transform.position = _firePosition;
+        GameObject projectile = actor.GetNewProjectile();
+        if (projectile == null) { Debug.LogError("[Error] projectile is null"); }
+        Rigidbody2D projectile_rigid = projectile.GetComponent<Rigidbody2D>();
+        projectile.transform.position = _firePosition;
         projectile_rigid.velocity = _direction.normalized * _projectileSpeed;
     }
 

@@ -1,6 +1,7 @@
 using UnityEngine;
 using Actor;
 using Command;
+using Monster;
 
 namespace State
 {
@@ -18,7 +19,12 @@ public class FortActiveState : BaseState
     }
 
     public BaseState StatusCheck(ActorBase actor) { return this; }
-    public void OnStateStart(ActorBase actor) {}
+    public void OnStateStart(ActorBase actor)
+    {
+        MagicFort fort = (MagicFort)actor;
+        fort.SetToActiveColor();
+        fort.ActiveWeakness();
+    }
     public void Reset() {}
 }
 

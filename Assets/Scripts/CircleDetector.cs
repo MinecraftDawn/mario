@@ -41,7 +41,6 @@ public class CircleDetector : Detector
         Vector3 center = transform.position + (Vector3)offset;
         Collider2D collider = Physics2D.OverlapCircle(center, _radius, detectLayer);
         if (!collider) { return null; }
-        Debug.Log("player in circle");
         Vector2 to_player = collider.transform.position - center;
         float angle = Vector2.SignedAngle(Vector2.right, to_player);
         if (angle < 0) { angle = 360 + angle; }

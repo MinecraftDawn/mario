@@ -15,13 +15,6 @@ public class AutoProjectile : MonsterAI
     private Vector2 _firePosition;
     [SerializeField]
     private DelayTimer _fireInterval;
-    private ProjectileManager _projectileManager;
-    public GameObject projectile;
-
-    void Start()
-    {
-        _projectileManager = new ProjectileManager(projectile);
-    }
 
     public override void Decide(Monster.Monster monster)
     {
@@ -29,7 +22,6 @@ public class AutoProjectile : MonsterAI
         if (!player_obj || !_fireInterval.HasDelayPassed()) { return; }
         // fire projectile
         FireProjectileCommand fire_command = monster.GenerateCommand<FireProjectileCommand>();
-        fire_command.SetProjectile(_projectileManager.GetInstance());
         fire_command.SetFirePosition(transform.position + (Vector3)_firePosition);
         fire_command.SetDirection(player_obj.transform.position - transform.position);
         fire_command.SetSpeed(5f);
