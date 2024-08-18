@@ -3,25 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class optionSelector : MonoBehaviour {
 
-    [SerializeField]
-    private Button start;
-    [SerializeField]
-    private Button option;
-    [SerializeField]
-    private Button quit;
-    [SerializeField] 
-    private string startScreen;
+    [FormerlySerializedAs("start")] [SerializeField]
+    private Button _startBtn;
+    [FormerlySerializedAs("option")] [SerializeField]
+    private Button _optionBtn;
+    [FormerlySerializedAs("quit")] [SerializeField]
+    private Button _quitBtn;
+    [FormerlySerializedAs("startScreen")] [SerializeField] 
+    private string _startScreenName;
     
     private Button[] buttons;
     private int currentIndex = 0;
     
     void Start()
     {
-        buttons = new Button[] { start, option, quit };
+        buttons = new Button[] { _startBtn, _optionBtn, _quitBtn };
         EventSystem.current.SetSelectedGameObject(buttons[currentIndex].gameObject);
     }
 
@@ -41,8 +42,9 @@ public class optionSelector : MonoBehaviour {
         }
     }
 
-    public void OnStartButtonPressed() {
-        SceneManager.LoadScene(startScreen);
+    public void OnStartButtonPressed() 
+    {
+        SceneManager.LoadScene(_startScreenName);
     }
 
     public void OnOptionButtonPressed()
