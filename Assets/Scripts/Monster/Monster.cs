@@ -5,6 +5,8 @@ using Actor;
 using Command;
 using State;
 
+namespace Monster {
+
 public class Monster : ActorBase
 {
     public float frontWallDetectRayLength = 0.1f;
@@ -24,7 +26,7 @@ public class Monster : ActorBase
         base.Start();
         _strategy = GetComponent<Strategy.MonsterAI>();
         _capsuleCollider = GetComponent<CapsuleCollider2D>();
-        _capsuleSize = _capsuleCollider.size;
+        _capsuleSize = _capsuleCollider == null ? Vector2.zero : _capsuleCollider.size;
     }
 
     protected override void PreparationBeforeFixedUpdate()
@@ -95,4 +97,8 @@ public class Monster : ActorBase
         }
         base.UpdateCommandHistory();
     }
+    
+    virtual public void Damaged() { gameObject.SetActive(false); }
+}
+
 }

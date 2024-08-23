@@ -18,7 +18,7 @@ public class TracePlayer : KeepMove
     public DelayTimer tracePlayerTurnAroundTimer = new DelayTimer(0.8f);
     private GameObject? _player;
 
-    public override void Decide(Monster monster)
+    public override void Decide(Monster.Monster monster)
     {
         UpdatePlayerDetection(monster);
         if (IsPlayerDetected()) {
@@ -29,7 +29,7 @@ public class TracePlayer : KeepMove
         }
     }
     
-    private void UpdatePlayerDetection(Monster monster) {
+    private void UpdatePlayerDetection(Monster.Monster monster) {
         GameObject? player = monster.GetDetectedPlayer();
         if (player is not null) {
             _player = player;
@@ -43,7 +43,7 @@ public class TracePlayer : KeepMove
         return _player != null;
     }
 
-    private void Tracing(Monster monster) {
+    private void Tracing(Monster.Monster monster) {
         if (_player is null) return;
         
         Vector2 monster_to_player = 

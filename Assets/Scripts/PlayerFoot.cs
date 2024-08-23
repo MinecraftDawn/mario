@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using State;
 using UnityEngine;
 
 public class PlayerFoot : MonoBehaviour
@@ -15,13 +16,13 @@ public class PlayerFoot : MonoBehaviour
     
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag == "MonsterHead") {
+        if (other.gameObject.tag == "MonsterWeakness" && _player.IsStateType<InAirState>()) {
             Vector2 velocity = _player.velocity;
             velocity.y = 0f;
             _player.velocity = velocity;
             _player.GetRigidbody().AddForce(_reactionForce * Vector2.up, ForceMode2D.Impulse);
-            // Destroy(other.gameObject.transform.parent.gameObject);
-            other.gameObject.transform.parent.gameObject.SetActive(false);
+            GameObject parent = other.gameObject.transform.parent.gameObject;
+            parent.GetComponent<Monster.Monster>().Damaged();
         }
     }
 }

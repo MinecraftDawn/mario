@@ -63,8 +63,9 @@ public class Player : ActorBase
     {
         if (other.gameObject.tag == "MonsterBody") {
             // Debug.Log("Hurt by monster!");
-            Hurt(other.gameObject.GetComponent<Monster>().ComputeHitForce(this));
+            Hurt(other.gameObject.GetComponent<Monster.Monster>().ComputeHitForce(this));
         }
+        
     }
 
     public override void SetFriction(FrictionType friction_type)

@@ -10,8 +10,7 @@ public class DelayTimer {
     protected float _delay;
     protected float _lastTime;
     
-    public DelayTimer() : this(1f){
-    }
+    public DelayTimer() : this(1f) {}
 
     public DelayTimer(float delay) {
         _delay = delay;

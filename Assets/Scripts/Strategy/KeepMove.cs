@@ -8,7 +8,7 @@ namespace Strategy
 
 public class KeepMove : MonsterAI
 {
-    public override void Decide(Monster monster) 
+    public override void Decide(Monster.Monster monster) 
     {
         if (monster.IsFrontWall()) { monster.TurnAround(); }
 

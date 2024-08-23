@@ -18,7 +18,7 @@ public abstract class BaseCommand
     protected void CheckUsing()
     {
         if (isUsing) { return; }
-        // Debug.Log("[Error] non-using command called Execute.");
+        Debug.Log("[Error] non-using command called Execute.");
     }
 
     public virtual void Execute(Actor.ActorBase actor) {}
@@ -122,7 +122,7 @@ public class MonsterMoveCommand : MoveCommand
     public override void Execute(Actor.ActorBase actor)
     {
         CheckUsing();
-        Monster monster = (Monster)actor;
+        Monster.Monster monster = (Monster.Monster)actor;
         Vector2 velocity = monster.velocity;
         float direction = monster.GetMoveToRight() ? 1 : -1;
         if (monster.IsOnGround() && monster.IsOnSlope()) {
@@ -132,6 +132,33 @@ public class MonsterMoveCommand : MoveCommand
         }
         monster.velocity = velocity;
     }
+}
+
+public class FireProjectileCommand : BaseCommand
+{
+    private Vector2 _direction;
+    private Vector2 _firePosition;
+    private float _projectileSpeed;
+    public FireProjectileCommand()
+    {
+        _direction = Vector2.right;
+        _projectileSpeed = 1f;
+    }
+
+    public void SetDirection(Vector2 direction) { _direction = direction; }
+    public void SetFirePosition(Vector2 position) { _firePosition = position; }
+    public void SetSpeed(float speed) { _projectileSpeed = speed; }
+
+    public override void Execute(ActorBase actor)
+    {
+        CheckUsing();
+        GameObject projectile = actor.GetNewProjectile();
+        if (projectile == null) { Debug.LogError("[Error] projectile is null"); }
+        Rigidbody2D projectile_rigid = projectile.GetComponent<Rigidbody2D>();
+        projectile.transform.position = _firePosition;
+        projectile_rigid.velocity = _direction.normalized * _projectileSpeed;
+    }
+
 }
 
 public class CommandPool
@@ -167,6 +194,7 @@ public class CommandPool
         Register<JumpCommand>();
         Register<HoldingJumpCommand>();
         Register<MonsterMoveCommand>();
+        Register<FireProjectileCommand>();
         _isInit = true;
     }
 
