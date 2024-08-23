@@ -214,6 +214,7 @@ public abstract class ActorBase : MonoBehaviour {
     }
 
     public virtual Vector2 ObjectFaceDirection() { return transform.localScale.x > 0.0f ? Vector2.right : Vector2.left; }
+    public virtual GameObject GetNewProjectile() { return null; }
 
 }
 }
