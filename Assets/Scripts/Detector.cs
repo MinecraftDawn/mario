@@ -19,7 +19,7 @@ public class Detector : MonoBehaviour
         WaitForSeconds wait = new WaitForSeconds(detectInterval);
         while (true) {
             yield return wait;
-            Debug.Log("Check");
+            // Debug.Log("Check");
             Collider2D collide = Detect();
             _detected = collide;
             detectedObject = _detected ? collide.gameObject : null;
