@@ -14,7 +14,7 @@ public class Monster : ActorBase
     [SerializeField]
     private float _hitForce = 5f;
     private Strategy.MonsterAI _strategy;
-    protected bool _frontWall;
+    protected bool _frontWall = false;
     protected bool _moveToRight = true;
     
     /************************************************************
