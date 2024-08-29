@@ -13,14 +13,9 @@ public class HealthBarController : MonoBehaviour
     public GameObject _healthItemPrefab;
     private List<GameObject> _healthItems;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        _healthItems = new List<GameObject>();
-    }
-
     public void Init(int max_health)
     {
+        _healthItems = new List<GameObject>();
         float next_interval = firstInterval;
         for (int i = 0; i < max_health; i++) {
             GameObject health_item = Instantiate(_healthItemPrefab, gameObject.transform);
