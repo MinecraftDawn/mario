@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-public class OptionSelector : MonoBehaviour {
+public class MainPageController : MonoBehaviour {
 
     [FormerlySerializedAs("start")] [SerializeField]
     private Button _startBtn;
