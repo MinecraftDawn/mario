@@ -16,7 +16,7 @@ public class PlayerFoot : MonoBehaviour
     
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag == "MonsterWeakness" && _player.IsFalling()) {
+        if (other.gameObject.tag == "MonsterWeakness" && _player.IsStateType<InAirState>()) {
             Vector2 velocity = _player.velocity;
             velocity.y = 0f;
             _player.velocity = velocity;
