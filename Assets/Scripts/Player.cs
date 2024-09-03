@@ -32,10 +32,13 @@ public class Player : ActorBase
     private float _unmoveTimeWhenHurt = 0.5f;
     [SerializeField]
     private UI.HealthBarController _healthBar;
+    [SerializeField]
+    private Color _hurtEffectColor;
     private LayerMask _invincibleExcludeLayer;
     private LayerMask _originalExcludeMask;
     private bool _isInvincible = false;
     private CapsuleCollider2D _capsuleCollider;
+    private SpriteRenderer _spriteRenderer;
     public PhysicsMaterial2D fullFriction;
     public PhysicsMaterial2D noFriction;
     public int health = 3;
@@ -48,6 +51,7 @@ public class Player : ActorBase
         _invincibleExcludeLayer = ~LayerMask.GetMask("Ground") & ~LayerMask.GetMask("Item");
         _originalExcludeMask = _capsuleCollider.excludeLayers;
         _healthBar.Init(health);
+        _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -123,6 +127,7 @@ public class Player : ActorBase
         _isInvincible = true;
         _invincibleTimer.UpdateLastTime();
         _capsuleCollider.excludeLayers = _invincibleExcludeLayer;
+        StartCoroutine(HurtEffect());
     }
     public void RemoveInvincible()
     {
@@ -159,6 +164,18 @@ public class Player : ActorBase
             _commandPool.ReturnObject(command);
         }
         base.CleanCommandList();
+    }
+
+    private IEnumerator HurtEffect()
+    {
+        Color original_color = _spriteRenderer.color;
+        while (_isInvincible) {
+            _spriteRenderer.color = _hurtEffectColor;
+            yield return new WaitForSeconds(0.1f);
+            _spriteRenderer.color = original_color;
+            yield return new WaitForSeconds(0.1f);
+        }
+        _spriteRenderer.color = original_color;
     }
 
 }
