@@ -1,0 +1,54 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+
+namespace TrapMotion
+{
+
+public class MovingPlatform : MonoBehaviour
+{
+    [SerializeField]
+    private float move_speed = 3f;
+    [SerializeField]
+    private List<Transform> _moveTargets;
+    private Rigidbody2D _rigidbody;
+    private int _moveTowardIdx;
+    private int _idxDirection;
+
+    void Start()
+    {
+        transform.position = _moveTargets[0].position;
+        _moveTowardIdx = 1;
+        _idxDirection = 1;
+        _rigidbody = GetComponent<Rigidbody2D>();
+        SetupVelocity();
+    }
+
+    void Update()
+    {
+        Transform target_transform = _moveTargets[_moveTowardIdx];
+        float distance = (target_transform.position - transform.position).magnitude;
+        if (distance <= 0.1f) { TowardNextTarget(); }
+    }
+
+    void TowardNextTarget()
+    {
+        if (_moveTowardIdx == _moveTargets.Count - 1 && _idxDirection > 0) {
+            _idxDirection = -1;
+        } else if (_moveTowardIdx == 0 && _idxDirection < 0) {
+            _idxDirection = 1;
+        }
+        _moveTowardIdx += _idxDirection;
+        SetupVelocity();
+    }
+
+    void SetupVelocity()
+    {
+        Transform next_target = _moveTargets[_moveTowardIdx];
+        Vector2 direction_to_target = (next_target.position - transform.position).normalized;
+        _rigidbody.velocity = direction_to_target * move_speed;
+    }
+}
+
+}
