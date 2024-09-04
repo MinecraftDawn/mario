@@ -16,6 +16,15 @@ public class MovingPlatform : MonoBehaviour
     private int _moveTowardIdx;
     private int _idxDirection;
 
+    void OnDrawGizmos()
+    {
+        Transform previous_transform = _moveTargets[0];
+        for (int i = 1; i < _moveTargets.Count; i++) {
+            Gizmos.DrawLine(previous_transform.position, _moveTargets[i].position);
+            previous_transform = _moveTargets[i];
+        }
+    }
+
     void Start()
     {
         transform.position = _moveTargets[0].position;
@@ -46,7 +55,8 @@ public class MovingPlatform : MonoBehaviour
     void SetupVelocity()
     {
         Transform next_target = _moveTargets[_moveTowardIdx];
-        Vector2 direction_to_target = (next_target.position - transform.position).normalized;
+        Transform previous_target = _moveTargets[_moveTowardIdx - _idxDirection];
+        Vector2 direction_to_target = (next_target.position - previous_target.position).normalized;
         _rigidbody.velocity = direction_to_target * move_speed;
     }
 }
