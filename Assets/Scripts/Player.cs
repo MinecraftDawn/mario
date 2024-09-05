@@ -60,12 +60,6 @@ public class Player : ActorBase
     public override void FixedUpdate()
     {
         base.FixedUpdate();
-        // if (_platformRigidbody != null) {
-        //     Vector2 temp_velocity = velocity;
-        //     temp_velocity.x += _platformRigidbody.velocity.x;
-        //     velocity = temp_velocity;
-        //     if (IsStateType<OnLandState>()) { _rigidbody.gravityScale = 10f; }
-        // }
     }
 
     void OnCollisionEnter2D(Collision2D other)
