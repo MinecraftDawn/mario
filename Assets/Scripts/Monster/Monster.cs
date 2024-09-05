@@ -26,6 +26,12 @@ public class Monster : ActorBase
         _strategy = GetComponent<Strategy.MonsterAI>();
     }
 
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+        if (_platformRigidbody == null) { _rigidbody.gravityScale = 1f; }
+    }
+
     protected override void PreparationBeforeFixedUpdate()
     {
         CollectState();
@@ -33,6 +39,14 @@ public class Monster : ActorBase
     }
     
     protected override void InitialState() { _stateManager.Init<MonsterState>(); }
+
+    protected override void FollowPlatform()
+    {
+        Vector2 temp_velocity = velocity;
+        temp_velocity.x += _platformRigidbody.velocity.x;
+        velocity = temp_velocity;
+        if (IsStateType<MonsterOnLandState>()) { _rigidbody.gravityScale = 10f; }
+    }
 
     /************************************************************
     * Actor Command Method

@@ -27,6 +27,7 @@ public abstract class ActorBase : MonoBehaviour {
     public Vector2 groundCastBoxSize;
     public Vector2 groundCastCenterOffset;
     public Vector2 directionCastBoxSize = new Vector2(0.3f, 0.4f);
+    public Rigidbody2D _platformRigidbody { get; set; }
 
     /************************************************************
     * Major Method
@@ -51,6 +52,7 @@ public abstract class ActorBase : MonoBehaviour {
         _groundMask = LayerMask.GetMask("Ground");
         CommandPool.InitPool();
         _commandPool = new CommandPool();
+        _platformRigidbody = null;
     }
 
     // Update is called once per frame
@@ -66,6 +68,7 @@ public abstract class ActorBase : MonoBehaviour {
         // TODO: Consider to call detect function in Update.
         PreparationBeforeFixedUpdate();
         StateFixedUpdate();
+        if (_platformRigidbody != null) { FollowPlatform(); }
     }
 
     private void StateFixedUpdate()
@@ -205,6 +208,8 @@ public abstract class ActorBase : MonoBehaviour {
     /************************************************************
     * Others
     ************************************************************/
+
+    protected virtual void FollowPlatform() {}
 
     public virtual void FlipObject()
     {

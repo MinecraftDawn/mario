@@ -36,7 +36,6 @@ public class Player : ActorBase
     private LayerMask _originalExcludeMask;
     private bool _isInvincible = false;
     private CapsuleCollider2D _capsuleCollider;
-    public Rigidbody2D _platformRigidbody { get; set; }
     public PhysicsMaterial2D fullFriction;
     public PhysicsMaterial2D noFriction;
     public int health = 3;
@@ -49,7 +48,6 @@ public class Player : ActorBase
         _invincibleExcludeLayer = ~LayerMask.GetMask("Ground") & ~LayerMask.GetMask("Item");
         _originalExcludeMask = _capsuleCollider.excludeLayers;
         _healthBar.Init(health);
-        _platformRigidbody = null;
     }
 
     // Update is called once per frame
@@ -62,12 +60,12 @@ public class Player : ActorBase
     public override void FixedUpdate()
     {
         base.FixedUpdate();
-        if (_platformRigidbody != null) {
-            Vector2 temp_velocity = velocity;
-            temp_velocity.x += _platformRigidbody.velocity.x;
-            velocity = temp_velocity;
-            if (IsStateType<OnLandState>()) { _rigidbody.gravityScale = 10f; }
-        }
+        // if (_platformRigidbody != null) {
+        //     Vector2 temp_velocity = velocity;
+        //     temp_velocity.x += _platformRigidbody.velocity.x;
+        //     velocity = temp_velocity;
+        //     if (IsStateType<OnLandState>()) { _rigidbody.gravityScale = 10f; }
+        // }
     }
 
     void OnCollisionEnter2D(Collision2D other)
@@ -167,6 +165,15 @@ public class Player : ActorBase
             _commandPool.ReturnObject(command);
         }
         base.CleanCommandList();
+    }
+
+    protected override void FollowPlatform()
+    {
+        Vector2 temp_velocity = velocity;
+        temp_velocity.x += _platformRigidbody.velocity.x;
+        velocity = temp_velocity;
+        // prevent actor to leave the platform
+        if (IsStateType<OnLandState>()) { _rigidbody.gravityScale = 10f; }
     }
 
     public Vector3 GetObjectCenter()

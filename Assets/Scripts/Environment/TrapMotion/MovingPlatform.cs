@@ -42,20 +42,18 @@ public class MovingPlatform : MonoBehaviour
         if (distance <= 0.1f) { TowardNextTarget(); }
     }
 
-    void OnCollisionEnter2D(Collision2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag == "Player") {
-            Player player = other.gameObject.GetComponent<Player>();
-            player._platformRigidbody = _rigidbody;
-        }
+        Actor.ActorBase actor = other.gameObject.GetComponent<Actor.ActorBase>();
+        if (actor == null) { return; }
+        actor._platformRigidbody = _rigidbody;
     }
 
-    void OnCollisionExit2D(Collision2D other)
+    void OnTriggerExit2D(Collider2D other)
     {
-        if (other.gameObject.tag == "Player") {
-            Player player = other.gameObject.GetComponent<Player>();
-            player._platformRigidbody = null;
-        }
+        Actor.ActorBase actor = other.gameObject.GetComponent<Actor.ActorBase>();
+        if (actor == null) { return; }
+        actor._platformRigidbody = null;
     }
 
     void TowardNextTarget()
