@@ -36,6 +36,7 @@ public class Player : ActorBase
     private LayerMask _originalExcludeMask;
     private bool _isInvincible = false;
     private CapsuleCollider2D _capsuleCollider;
+    private Rigidbody2D _platformRigidbody;
     public PhysicsMaterial2D fullFriction;
     public PhysicsMaterial2D noFriction;
     public int health = 3;
@@ -48,6 +49,7 @@ public class Player : ActorBase
         _invincibleExcludeLayer = ~LayerMask.GetMask("Ground") & ~LayerMask.GetMask("Item");
         _originalExcludeMask = _capsuleCollider.excludeLayers;
         _healthBar.Init(health);
+        _platformRigidbody = null;
     }
 
     // Update is called once per frame
@@ -60,6 +62,12 @@ public class Player : ActorBase
     public override void FixedUpdate()
     {
         base.FixedUpdate();
+        if (_platformRigidbody != null && _platformRigidbody.gameObject.tag == "MovingPlatform") {
+            Vector2 temp_velocity = velocity;
+            temp_velocity.x += _platformRigidbody.velocity.x;
+            velocity = temp_velocity;
+            if (IsStateType<OnLandState>()) { SetGravityToFull(); }
+        }
     }
 
     void OnCollisionEnter2D(Collision2D other)
@@ -78,6 +86,17 @@ public class Player : ActorBase
         } else if (friction_type == FrictionType.NONE) {
             _capsuleCollider.sharedMaterial = noFriction;
         }
+    }
+
+    protected override RaycastHit2D? DetectGround() 
+    {
+        Vector2 center = transform.position;
+        center += groundCastCenterOffset;
+        RaycastHit2D hit = Physics2D.BoxCast(center, 
+            groundCastBoxSize, 0, -Vector2.up, groundCastDist, _groundMask);
+        _onGround = hit;
+        _platformRigidbody = hit.rigidbody;
+        return hit ? hit : null; // check hit.collider is empty or not
     }
 
     public void Hurt(Vector2 force)
