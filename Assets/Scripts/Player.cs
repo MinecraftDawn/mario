@@ -32,10 +32,13 @@ public class Player : ActorBase
     private float _unmoveTimeWhenHurt = 0.5f;
     [SerializeField]
     private UI.HealthBarController _healthBar;
+    [SerializeField]
+    private Color _hurtEffectColor;
     private LayerMask _invincibleExcludeLayer;
     private LayerMask _originalExcludeMask;
     private bool _isInvincible = false;
     private CapsuleCollider2D _capsuleCollider;
+    private SpriteRenderer _spriteRenderer;
     public PhysicsMaterial2D fullFriction;
     public PhysicsMaterial2D noFriction;
     public int health = 3;
@@ -48,12 +51,12 @@ public class Player : ActorBase
         _invincibleExcludeLayer = ~LayerMask.GetMask("Ground") & ~LayerMask.GetMask("Item");
         _originalExcludeMask = _capsuleCollider.excludeLayers;
         _healthBar.Init(health);
+        _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
     public override void Update()
     {
-        if (_isInvincible && _invincibleTimer.HasDelayPassed()) { RemoveInvincible(); }
         base.Update();
     }
 
@@ -118,17 +121,24 @@ public class Player : ActorBase
     public float GetDecelerate() { return _decelerate; }
     public float GetUnmoveTime() { return _unmoveTimeWhenHurt; }
     public bool IsInvincible() { return _isInvincible; }
-    public void SetInvincible()
+    public void SetInvincible() { StartCoroutine(StartInvincible()); }
+
+    private IEnumerator StartInvincible()
     {
         _isInvincible = true;
         _invincibleTimer.UpdateLastTime();
         _capsuleCollider.excludeLayers = _invincibleExcludeLayer;
-    }
-    public void RemoveInvincible()
-    {
+        Color original_color = _spriteRenderer.color;
+        while (!_invincibleTimer.HasDelayPassed()) {
+            _spriteRenderer.color = _hurtEffectColor;
+            yield return new WaitForSeconds(0.1f);
+            _spriteRenderer.color = original_color;
+            yield return new WaitForSeconds(0.1f);
+        }
         Debug.Log("remove invincible");
         _isInvincible = false;
         _capsuleCollider.excludeLayers = _originalExcludeMask;
+        _spriteRenderer.color = original_color;
     }
 
     public override void ReceiveCommands(BaseCommand command)
@@ -160,5 +170,4 @@ public class Player : ActorBase
         }
         base.CleanCommandList();
     }
-
 }
