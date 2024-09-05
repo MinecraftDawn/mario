@@ -45,7 +45,9 @@ public class Monster : ActorBase
         Vector2 temp_velocity = velocity;
         temp_velocity.x += _platformRigidbody.velocity.x;
         velocity = temp_velocity;
-        if (IsStateType<MonsterOnLandState>()) { _rigidbody.gravityScale = 10f; }
+        if (IsStateType<MonsterOnLandState>()) {
+            _rigidbody.gravityScale = ON_MOVABLE_PLATFORM_GRAVITY;
+        }
     }
 
     /************************************************************

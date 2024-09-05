@@ -167,7 +167,9 @@ public class Player : ActorBase
         temp_velocity.x += _platformRigidbody.velocity.x;
         velocity = temp_velocity;
         // prevent actor to leave the platform
-        if (IsStateType<OnLandState>()) { _rigidbody.gravityScale = 10f; }
+        if (IsStateType<OnLandState>()) {
+            _rigidbody.gravityScale = ON_MOVABLE_PLATFORM_GRAVITY;
+        }
     }
 
     public Vector3 GetObjectCenter()

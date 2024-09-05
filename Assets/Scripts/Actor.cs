@@ -20,6 +20,7 @@ public abstract class ActorBase : MonoBehaviour {
     protected Vector2 _groundDirection;
     protected CommandPool _commandPool;
     protected StateManager _stateManager;
+    protected const float ON_MOVABLE_PLATFORM_GRAVITY = 20f;
     public float horizontalSpeed = 3f;
     public float jumpForce = 3f;
     public float maxFallSpeed = 10f;
