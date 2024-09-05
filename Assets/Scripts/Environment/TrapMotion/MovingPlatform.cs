@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -39,6 +40,22 @@ public class MovingPlatform : MonoBehaviour
         Transform target_transform = _moveTargets[_moveTowardIdx];
         float distance = (target_transform.position - transform.position).magnitude;
         if (distance <= 0.1f) { TowardNextTarget(); }
+    }
+
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "Player") {
+            Player player = other.gameObject.GetComponent<Player>();
+            player._platformRigidbody = _rigidbody;
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "Player") {
+            Player player = other.gameObject.GetComponent<Player>();
+            player._platformRigidbody = null;
+        }
     }
 
     void TowardNextTarget()
