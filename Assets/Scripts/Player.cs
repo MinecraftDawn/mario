@@ -171,6 +171,17 @@ public class Player : ActorBase
         base.CleanCommandList();
     }
 
+    protected override void FollowPlatform()
+    {
+        Vector2 temp_velocity = velocity;
+        temp_velocity.x += _platformRigidbody.velocity.x;
+        velocity = temp_velocity;
+        // prevent actor to leave the platform
+        if (IsStateType<OnLandState>()) {
+            _rigidbody.gravityScale = ON_MOVABLE_PLATFORM_GRAVITY;
+        }
+    }
+
     public Vector3 GetObjectCenter()
     {
         Vector3 center = transform.position;

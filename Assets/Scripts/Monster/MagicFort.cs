@@ -32,6 +32,7 @@ public class MagicFort : Monster
         FortInActiveState state = StateTransition<FortInActiveState>();
         state.OnStateStart(this);
     }
+    protected override void FollowPlatform() {}
     public float GetInactiveLatency() { return _inactiveLatency; }
     public void SetToInactiveColor() { _renderer.color = _inactiveColor; }
     public void SetToActiveColor() { _renderer.color = _activeColor; }
