@@ -170,4 +170,12 @@ public class Player : ActorBase
         }
         base.CleanCommandList();
     }
+
+    public Vector3 GetObjectCenter()
+    {
+        Vector3 center = transform.position;
+        center += (Vector3)_capsuleCollider.offset;
+        return center;
+    }
+
 }
