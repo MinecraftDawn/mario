@@ -22,6 +22,8 @@ public class Plank : ItemBase
     private float _firePositionOffsetY;
     [SerializeField]
     private float _projectileSpeed;
+    [SerializeField]
+    private FirePosition _firePositionObject;
 
     void Start()
     {
@@ -43,12 +45,17 @@ public class Plank : ItemBase
             _canTrigger = false;
             _triggerCoolDownTimer.UpdateLastTime();
 
+            if (_firePositionObject == null){
+                Debug.Log("[Error] FirePosition object is not set.");
+                return;
+            }
+            //_firePosition = (Vector2)_firePositionObject.transform.position;
             _firePosition = new Vector2(transform.position.x + _firePositionOffsetX, transform.position.y + _firePositionOffsetY);
             Vector2 player_position = actor.transform.position;
             _direction = (player_position - _firePosition).normalized;
 
             projectile = _projectileManager.GetInstance();
-            if (projectile == null) { Debug.LogError("[Error] projectile is null"); }
+            if (projectile == null) { Debug.Log("[Error] projectile is null"); }
             Rigidbody2D projectile_rigid = projectile.GetComponent<Rigidbody2D>();
             projectile.transform.position = _firePosition;
             projectile_rigid.velocity = _direction * _projectileSpeed;
