@@ -21,7 +21,7 @@ public class Player : ActorBase
     // This attribute is used to compute player's movement speed.
     // It is calculated independently, and will overwrite the rigidbody velocity in some rule.
     // For detail implementation see AddForce method in below.
-    private float _moveSpeed = 0f; 
+    public float _moveSpeed = 0f; 
     [SerializeField]
     private float _accelerate = 5f;
     [SerializeField]
@@ -39,6 +39,7 @@ public class Player : ActorBase
     public PhysicsMaterial2D fullFriction;
     public PhysicsMaterial2D noFriction;
     public int health = 3;
+    public Animator animator;
 
     // Start is called before the first frame update
     public override void Start()
@@ -48,6 +49,7 @@ public class Player : ActorBase
         _invincibleExcludeLayer = ~LayerMask.GetMask("Ground") & ~LayerMask.GetMask("Item");
         _originalExcludeMask = _capsuleCollider.excludeLayers;
         _healthBar.Init(health);
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame

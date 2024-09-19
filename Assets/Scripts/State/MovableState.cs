@@ -25,7 +25,7 @@ public class MovableState : BaseState
 
     public virtual BaseState StatusCheck(ActorBase actor) { return this; }
 
-    public virtual void OnStateStart(ActorBase actor) {}
+    public virtual void OnStateStart(ActorBase actor) { }
     public virtual void Reset() {}
 }
 
