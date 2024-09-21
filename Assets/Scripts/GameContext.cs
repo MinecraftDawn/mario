@@ -8,14 +8,15 @@ public class GameContext : MonoBehaviour
     [SerializeField]
     private GameObject _gameOverInterface;
     [SerializeField]
+    private GameObject _gameFinishInterface;
+    [SerializeField]
     private InputHandler _inputHandler;
     [SerializeField]
     private GameObject _player;
-    public static EventQueue eventQueue;
-    public int maxExecuteCount = 5;
-
     [SerializeField]
     private int score;
+    public static EventQueue eventQueue;
+    public int maxExecuteCount = 5;
 
     void Start()
     {
@@ -37,6 +38,12 @@ public class GameContext : MonoBehaviour
     public void GameOver()
     {
         _gameOverInterface.SetActive(true);
+        _inputHandler.DisablePlayerControl();
+    }
+
+    public void GameFinish()
+    {
+        _gameFinishInterface.SetActive(true);
         _inputHandler.DisablePlayerControl();
     }
     public GameObject GetPlayer() { return _player; }
