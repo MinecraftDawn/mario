@@ -6,9 +6,9 @@ using Event;
 public class GameContext : MonoBehaviour
 {
     [SerializeField]
-    private GameObject _gameOverInterface;
+    private GameObject _gameOverUI;
     [SerializeField]
-    private GameObject _gameFinishInterface;
+    private GameObject _gameFinishUI;
     [SerializeField]
     private InputHandler _inputHandler;
     [SerializeField]
@@ -22,7 +22,7 @@ public class GameContext : MonoBehaviour
     void Start()
     {
         eventQueue = new EventQueue();
-        _gameOverInterface.SetActive(false);
+        _gameOverUI.SetActive(false);
     }
 
     void Update()
@@ -38,13 +38,13 @@ public class GameContext : MonoBehaviour
     public void AddScore(int value) { score += value; }
     public void GameOver()
     {
-        _gameOverInterface.SetActive(true);
+        _gameOverUI.SetActive(true);
         _inputHandler.DisablePlayerControl();
     }
 
     public void GameFinish()
     {
-        _gameFinishInterface.SetActive(true);
+        _gameFinishUI.SetActive(true);
         _inputHandler.DisablePlayerControl();
     }
     public GameObject GetPlayer() { return _player; }
