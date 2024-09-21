@@ -5,6 +5,10 @@ using Event;
 
 public class GameContext : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject _gameOverInterface;
+    [SerializeField]
+    private InputHandler _inputHandler;
     public static EventQueue eventQueue;
     public int maxExecuteCount = 5;
 
@@ -14,6 +18,7 @@ public class GameContext : MonoBehaviour
     void Start()
     {
         eventQueue = new EventQueue();
+        _gameOverInterface.SetActive(false);
     }
 
     void Update()
@@ -27,4 +32,9 @@ public class GameContext : MonoBehaviour
     }
 
     public void AddScore(int value) { score += value; }
+    public void GameOver()
+    {
+        _gameOverInterface.SetActive(true);
+        _inputHandler.DisablePlayerControl();
+    }
 }

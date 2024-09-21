@@ -6,10 +6,18 @@ using Command;
 
 class InputHandler : MonoBehaviour
 {
+    private bool _isPlayerControlable;
     public GameObject player;
+
+    void Start()
+    {
+        EnablePlayerControl();
+    }
 
     void Update()
     {
+        if (!_isPlayerControlable) { return; }
+
         float horizontal = Input.GetAxis("Horizontal");
         Player player_component = player.GetComponent<Player>();
         if (Input.GetKey(KeyCode.Escape)) { Application.Quit(); }
@@ -34,4 +42,7 @@ class InputHandler : MonoBehaviour
         // For Test
         if(Input.GetKeyDown(KeyCode.Space)) { player_component.ReceiveCommands(new TestCommand()); }
     }
+
+    public void DisablePlayerControl() { _isPlayerControlable = false; }
+    public void EnablePlayerControl() { _isPlayerControlable = true; }
 }
