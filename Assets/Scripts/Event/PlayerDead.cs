@@ -11,6 +11,8 @@ public class PlayerDead : EventBase
     {
         Debug.Log("[Debug] Event: Player dead");
         context.GameOver();
+        GameObject player = context.GetPlayer();
+        player.SetActive(false);
     }
 }
 

@@ -9,6 +9,8 @@ public class GameContext : MonoBehaviour
     private GameObject _gameOverInterface;
     [SerializeField]
     private InputHandler _inputHandler;
+    [SerializeField]
+    private GameObject _player;
     public static EventQueue eventQueue;
     public int maxExecuteCount = 5;
 
@@ -37,4 +39,5 @@ public class GameContext : MonoBehaviour
         _gameOverInterface.SetActive(true);
         _inputHandler.DisablePlayerControl();
     }
+    public GameObject GetPlayer() { return _player; }
 }
