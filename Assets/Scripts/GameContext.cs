@@ -17,6 +17,7 @@ public class GameContext : MonoBehaviour
     private int score;
     public static EventQueue eventQueue;
     public int maxExecuteCount = 5;
+    public bool isGameMode = false;
 
     void Start()
     {
