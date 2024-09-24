@@ -23,6 +23,8 @@ public class Player : ActorBase
     // For detail implementation see AddForce method in below.
     private float _moveSpeed = 0f; 
     [SerializeField]
+    private float _runFactor = 1.5f;
+    [SerializeField]
     private float _accelerate = 5f;
     [SerializeField]
     private float _decelerate = 3f;
@@ -117,6 +119,7 @@ public class Player : ActorBase
     public void CleanMoveSpeed() { _moveSpeed = 0f; }
     public void SyncMoveSpeedWithVelocityX() { _moveSpeed = velocity.x; }
     public float GetMoveSpeed() { return _moveSpeed; }
+    public float GetRunFactor() { return _runFactor; }
     public float GetAccelerate() { return _accelerate; }
     public float GetDecelerate() { return _decelerate; }
     public float GetUnmoveTime() { return _unmoveTimeWhenHurt; }

@@ -56,13 +56,16 @@ public class MoveCommand : BaseCommand
 
 public class SmoothMoveCommand : MoveCommand
 {
+    private bool _runMode;
     public SmoothMoveCommand() {}
     public SmoothMoveCommand(float horizontal) : base(horizontal) {}
+    public void SetRunMode(bool is_run_mode) { _runMode = is_run_mode; }
     public override void Execute(ActorBase actor)
     {
         CheckUsing();
         Player player = (Player)actor;
-        float target_speed = actor.horizontalSpeed * _horizontal;
+        float target_speed = actor.horizontalSpeed * _horizontal * 
+                             (_runMode ? player.GetRunFactor() : 1.0f);
         float current_speed = player.GetMoveSpeed();
         float lerp = actor.IsStateType<OnLandState>() ? 1.0f : 0.5f;
         target_speed = Mathf.Lerp(current_speed, target_speed, lerp);
