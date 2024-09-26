@@ -85,6 +85,7 @@ public class JumpCommand : BaseCommand
     public override void Execute(Actor.ActorBase actor)
     {
         CheckUsing();
+        if (actor.gameObject.tag == "Player") { ((Player)actor).SetGravityToBase(); }
         Vector2 new_velocity = actor.velocity;
         new_velocity.y = 0f;
         actor.velocity = new_velocity;
