@@ -18,15 +18,9 @@ public class Zako : Monster
         _capsuleSize = _capsuleCollider == null ? Vector2.zero : _capsuleCollider.size;
     }
 
-    protected override void CollectState()
-    {
-        base.CollectState();
-        _frontWall = DetectFrontWall() != null;
-    }
-
     protected override void InitialState() { _stateManager.Init<MonsterOnLandState>(); }
 
-    protected RaycastHit2D? DetectFrontWall()
+    protected override RaycastHit2D? DetectFrontWall()
     {
         Vector2 start_position = _rigidbody.position;
         Vector2 direction = Vector2.right * (GetMoveToRight() ? 1 : -1);

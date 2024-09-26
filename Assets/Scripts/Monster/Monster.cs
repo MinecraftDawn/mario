@@ -32,6 +32,12 @@ public class Monster : ActorBase
         if (_platformRigidbody == null) { _rigidbody.gravityScale = 1f; }
     }
 
+    protected override void CollectState()
+    {
+        base.CollectState();
+        _frontWall = DetectFrontWall() != null;
+    }
+
     protected override void PreparationBeforeFixedUpdate()
     {
         CollectState();
@@ -91,6 +97,8 @@ public class Monster : ActorBase
         direction.x *= Mathf.Sign(to_player.x);
         return direction * _hitForce;
     }
+
+    virtual protected RaycastHit2D? DetectFrontWall() { return null; }
 
     public GameObject GetDetectedPlayer() { return detector?.GetDetectedObject(); }
     public bool IsFrontWall() { return _frontWall; }
