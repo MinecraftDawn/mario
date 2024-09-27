@@ -105,6 +105,7 @@ public class Monster : ActorBase
 
     public GameObject GetDetectedPlayer() { return detector?.GetDetectedObject(); }
     public bool IsFrontWall() { return _frontWall; }
+    public bool IsFrontFloor() { return _frontFloor; }
     public bool GetMoveToRight() { return _moveToRight; }
     public void TurnAround()
     {
