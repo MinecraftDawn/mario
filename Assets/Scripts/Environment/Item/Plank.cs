@@ -7,7 +7,8 @@ using utils;
 
 public class Plank : ItemBase
 {
-    public GameObject projectile;
+    [SerializeField]
+    private GameObject projectile;
     [SerializeField]
     private float _triggerCoolDown = 3f;
     [SerializeField]
@@ -15,7 +16,8 @@ public class Plank : ItemBase
     private bool _canTrigger;
     private ProjectileManager _projectileManager;
     private Vector2 _direction;
-    private Vector2 _firePosition;
+    [SerializeField]
+    private GameObject _firePosition;
     [SerializeField]
     private float _firePositionOffsetX;
     [SerializeField]
@@ -29,7 +31,6 @@ public class Plank : ItemBase
     void Start()
     {
         _triggerCoolDownTimer = new DelayTimer(_triggerCoolDown);
-        _triggerCoolDownTimer.UpdateLastTime();
         _canTrigger = true;
         _projectileManager = new ProjectileManager(projectile);
         _animator = GetComponent<Animator>();
@@ -43,20 +44,19 @@ public class Plank : ItemBase
     public override void Effect(ActorBase actor)
     {
         if (_canTrigger) { 
-            Debug.Log("Trigger the plank trap");
             _canTrigger = false;
             _triggerCoolDownTimer.UpdateLastTime();
 
             _animator.SetTrigger("PlankTrigger");
 
-            _firePosition = new Vector2(transform.position.x + _firePositionOffsetX, transform.position.y + _firePositionOffsetY);
+            _firePosition.transform.position = new Vector2(transform.position.x + _firePositionOffsetX, transform.position.y + _firePositionOffsetY);
             Vector2 player_position = actor.transform.position;
-            _direction = (player_position - _firePosition).normalized;
+            _direction = (player_position - (Vector2)_firePosition.transform.position).normalized;
 
             projectile = _projectileManager.GetInstance();
             if (projectile == null) { Debug.Log("[Error] projectile is null"); }
             Rigidbody2D projectile_rigid = projectile.GetComponent<Rigidbody2D>();
-            projectile.transform.position = _firePosition;
+            projectile.transform.position = _firePosition.transform.position;
             projectile_rigid.velocity = _direction * _projectileSpeed;
         }
     }
