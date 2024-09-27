@@ -15,6 +15,7 @@ public class Monster : ActorBase
     private float _hitForce = 5f;
     private Strategy.MonsterAI _strategy;
     protected bool _frontWall = false;
+    protected bool _frontFloor = false;
     protected bool _moveToRight = true;
     
     /************************************************************
@@ -36,6 +37,7 @@ public class Monster : ActorBase
     {
         base.CollectState();
         _frontWall = DetectFrontWall() != null;
+        _frontFloor = DetectFrontFloor() != null;
     }
 
     protected override void PreparationBeforeFixedUpdate()
@@ -99,6 +101,7 @@ public class Monster : ActorBase
     }
 
     virtual protected RaycastHit2D? DetectFrontWall() { return null; }
+    virtual protected RaycastHit2D? DetectFrontFloor() { return null; }
 
     public GameObject GetDetectedPlayer() { return detector?.GetDetectedObject(); }
     public bool IsFrontWall() { return _frontWall; }
