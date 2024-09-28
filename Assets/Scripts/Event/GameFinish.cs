@@ -10,6 +10,8 @@ public class GameFinish : EventBase
     public void UpdateContext(GameContext context)
     {
         Debug.Log("[Debug] Event: Game finished");
+        if (!context.isGameMode) { return; }
+        context.GameFinish();
     }
 }
 
