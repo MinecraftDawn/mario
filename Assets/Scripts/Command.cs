@@ -56,26 +56,37 @@ public class MoveCommand : BaseCommand
 
 public class SmoothMoveCommand : MoveCommand
 {
+    private bool _runMode;
     public SmoothMoveCommand() {}
     public SmoothMoveCommand(float horizontal) : base(horizontal) {}
+    public void SetRunMode(bool is_run_mode) { _runMode = is_run_mode; }
     public override void Execute(ActorBase actor)
     {
         CheckUsing();
         Player player = (Player)actor;
-        float target_speed = actor.horizontalSpeed * _horizontal;
-        float current_speed = player.GetMoveSpeed();
-        float lerp = actor.IsStateType<OnLandState>() ? 1.0f : 0.5f;
-        target_speed = Mathf.Lerp(current_speed, target_speed, lerp);
+        float target_speed = ComputeTargetSpeed(player);
+        player.AddMovementForce(ComputeMoveForce(player, target_speed));
+        Vector2 player_direction = player.velocity.x > 0.0f ? Vector2.right : Vector2.left;
+        if (player.ObjectFaceDirection() != player_direction) { player.FlipObject(); }
+    }
 
+    private float ComputeTargetSpeed(Player player)
+    {
+        float target_speed = player.horizontalSpeed * _horizontal * 
+                             (_runMode ? player.GetRunFactor() : 1.0f);
+        float lerp = player.IsStateType<OnLandState>() ? 1.0f : 0.5f;
+        target_speed = Mathf.Lerp(player.GetMoveSpeed(), target_speed, lerp);
+        return target_speed;
+    }
+
+    private float ComputeMoveForce(Player player, float target_speed)
+    {
         // speed_diff have the direction of the force,
         // compute the force value by speed_diff * accelerate,
         // this method does not have any theory, it is an empirical method.
         float accelerate = player.GetAccelerate();
-        float speed_diff = target_speed - current_speed;
-        float movement = speed_diff * accelerate;
-        player.AddMovementForce(movement);
-        Vector2 player_direction = player.velocity.x > 0.0f ? Vector2.right : Vector2.left;
-        if (player.ObjectFaceDirection() != player_direction) { player.FlipObject(); }
+        float speed_diff = target_speed - player.GetMoveSpeed();
+        return speed_diff * accelerate;
     }
 }
 

@@ -26,6 +26,7 @@ class InputHandler : MonoBehaviour
         if (horizontal != 0) {
             SmoothMoveCommand command = player_component.GenerateCommand<SmoothMoveCommand>();
             command.SetHorizontal(horizontal);
+            command.SetRunMode(Input.GetKey(KeyCode.LeftShift) ? true : false);
             player_component.ReceiveCommands(command);
         }
         if (Input.GetKey(KeyCode.UpArrow)) {
