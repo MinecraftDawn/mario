@@ -242,7 +242,7 @@ public class CommandPool
     }
 
     // Used to debug memory leak issue
-    private void CheckNumberValid<T>() where T : BaseCommand
+    public void CheckNumberValid<T>() where T : BaseCommand
     {
         int counter = 0;
         for (int i = 0; i < _poolSize; i++) {

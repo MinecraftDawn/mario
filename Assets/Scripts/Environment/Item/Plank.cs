@@ -18,10 +18,10 @@ public class Plank : ItemBase
     private Vector2 _direction;
     [SerializeField]
     private GameObject _firePosition;
-    [SerializeField]
-    private float _firePositionOffsetX;
-    [SerializeField]
-    private float _firePositionOffsetY;
+    // [SerializeField]
+    // private float _firePositionOffsetX;
+    // [SerializeField]
+    // private float _firePositionOffsetY;
     [SerializeField]
     private float _projectileSpeed;
     private Animator _animator;
@@ -49,7 +49,6 @@ public class Plank : ItemBase
 
             _animator.SetTrigger("PlankTrigger");
 
-            _firePosition.transform.position = new Vector2(transform.position.x + _firePositionOffsetX, transform.position.y + _firePositionOffsetY);
             Vector2 player_position = actor.transform.position;
             _direction = (player_position - (Vector2)_firePosition.transform.position).normalized;
 

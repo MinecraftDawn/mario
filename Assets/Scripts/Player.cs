@@ -144,6 +144,11 @@ public class Player : ActorBase
         _spriteRenderer.color = original_color;
     }
 
+    protected override void InitialState()
+    {
+        _stateManager.Init<OnLandState>();
+    }
+
     public override void ReceiveCommands(BaseCommand command)
     {
         if (_commandSet.Contains(command)) {
@@ -153,11 +158,6 @@ public class Player : ActorBase
         base.ReceiveCommands(command);
     }
 
-    protected override void InitialState()
-    {
-        _stateManager.Init<OnLandState>();
-        // _stateManager.Init<UnmovableState>();
-    }
     protected override void UpdateCommandHistory()
     {
         foreach (BaseCommand history_command in _commandHistoryInLastCycle) {
