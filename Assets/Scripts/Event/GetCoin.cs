@@ -11,7 +11,7 @@ public class GetCoin : EventBase
     public GetCoin(int coin_value) { _coinValue = coin_value; }
     public void UpdateContext(GameContext context)
     {
-        Debug.Log("GetCoin Update Game State! + " + _coinValue + " score");
+        Debug.Log("[Debug] Event: GetCoin Update Game State! + " + _coinValue + " score");
         context.AddScore(_coinValue);
     }
 }
